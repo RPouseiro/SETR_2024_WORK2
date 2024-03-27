@@ -42,7 +42,7 @@
 */
 #define BUFFER_SIZE 20
 
-
+/************************ERRORS************************/
 /**
  * \brief Alias for sucessfull return.
  * 
@@ -55,7 +55,7 @@
  * 
  * Indicates a failure at the execution of the called function. 
 */
-#define SS_FAILURE -1
+#define SS_FAILURE_BUFFERFULL -1
 
 /*********************************************************/
 
@@ -76,20 +76,6 @@ struct Measures
     uint8_t Air_CO2[5*MAX_AIR_RECORD];            /**< Array for storing dioxide measures*/
 };
 
-typedef struct Buffer Buffer;
-struct Buffer
-{
-    uint8_t data[BUFFER_SIZE];      /**< Struct to store the bytes*/
-    unsigned int index;           /**< Use to indicate how many elements are presented in the buffer*/ 
-};
-
-typedef struct SENSOR SENSOR;
-struct SENSOR
-{
-    Measures *measures;
-    Buffer *receiver;
-    Buffer *transmitter;
-};
 /*********************************************************/
 
 /*********************************************************//**
@@ -97,27 +83,21 @@ struct SENSOR
  * 
  * Struct for storing the information about the pointers of each unity measure stored (temperature, humidity and Co2)
 */
-SENSOR* SS_Init();
+Measures* SS_InitMeasures(); //DONE
 
 /**
  * \brief Clears the memory used for storing measures.
  * 
  * XPTO XPTO XPTO
 */
-void SS_Clear(Measures *pnt);
+void SS_ClearMeasures(Measures *pnt); //DONE
 
-/**
- * \brief Read a byte from terminal.
- * 
- * Prompt to the user insert an byte through terminal to simulate the output from the UART receiver.
-*/
-uint8_t SS_ReadByte();
+int SS_ResetRxBuffer();
 
-/**
- * \brief Send byte thorugh the terminal.
- * 
- * Prints out the byte from the uC through terminal to simulate the output from the UART transmitter.
-*/
-/*********************************************************/
-uint8_t SS_SendByte();
+int SS_ResetTxBuffer();
+
+int SS_AddCharRx(uint8_t aux);
+
+int SS_AddCharTx(uint8_t aux);
+
 #endif

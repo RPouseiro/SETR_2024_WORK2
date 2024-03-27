@@ -11,13 +11,11 @@
  * \date 12-03-2024
 */
 /*******************************************************/
-
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "smartsensor.h"
-
 
 /******************INTERNAL VARIABLES******************/
 static uint8_t UART_RxBuffer[BUFFER_SIZE];
@@ -37,9 +35,8 @@ Measures *SS_InitMeasures()
     }
     else
     {
-        return 
+        return measures;
     }
-    return measures;
 }
 
 void SS_ClearMeasures(Measures *pnt)
@@ -54,26 +51,38 @@ int SS_ResetRxBuffer()
         UART_RxBuffer[i] = 0;
     }
     RxBufLen = 0;
+    return SS_SUCCESS;
 }
 
 int SS_ResetTxBuffer()
 {
-
+    for(int i=0;i<BUFFER_SIZE;i++)
+    {
+        UART_TxBuffer[i] = 0;
+    }
+    TxBufLen = 0;
+    return SS_SUCCESS;
 }
+
 int SS_AddCharRx(uint8_t aux)
 {
     //Check if buffer is full and return error
     if (RxBufLen >= BUFFER_SIZE)    return SS_FAILURE_BUFFERFULL;
 
+    // Add new char to the buffer
     UART_RxBuffer[RxBufLen] = aux;
     RxBufLen += 1;
+
+    return SS_SUCCESS;
 }
 
-uint8_t SS_AddCharTx(uint8_t aux)
+int SS_AddCharTx(uint8_t aux)
 {
     //Check if buffer is full and return error
     if (TxBufLen >= BUFFER_SIZE)    return SS_FAILURE_BUFFERFULL;
 
     UART_TxBuffer[RxBufLen] = aux;
     TxBufLen += 1;
+
+    return SS_SUCCESS;
 }
