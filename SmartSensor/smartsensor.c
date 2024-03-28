@@ -86,3 +86,8 @@ int SS_AddCharTx(uint8_t aux)
 
     return SS_SUCCESS;
 }
+
+int SS_ProcessCom()
+{
+
+}
