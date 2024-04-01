@@ -15,7 +15,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "smartsensor.h"
+#include "SmartSensor.h"
 
 /******************INTERNAL VARIABLES******************/
 static uint8_t UART_RxBuffer[BUFFER_SIZE];
@@ -116,7 +116,7 @@ int SS_ProcessCom()
                     SS_RealTimeCO2();
 
                     // Clear command and previous positions on the RxBuffer
-                    int aux = i+4;
+                    aux = i+4;
                     for(i=0;i<aux;i++)
                     {
                         UART_RxBuffer[i]=NULL;
