@@ -108,6 +108,13 @@
 */
 #define SS_FAILURE_ENDFRAMENOTFOUND -4
 
+/**
+ * \brief Alias for failed return.
+ * 
+ * Indicates a failure at the execution of the called function. 
+*/
+#define SS_FAILURE_COMMANDNOTFOUND -5
+
 /*********************************************************/
 
 #include <stdint.h>
@@ -136,15 +143,7 @@ struct Measures
  * 
  * \return If the function has sucesfully reserved space in memory for the struct Measures,  it returns the pointer to this struct. Otherwise returns NULL.
 */
-Measures* SS_InitMeasures(); //DONE
-
-/**
- * \brief Frees the memory used for storing measures.
- * 
- * Must be done after terminate the execution on the main program in order to free up the memory used for storing the values
- * \return Nothing
-*/
-void SS_ClearMeasures(Measures *pnt); //DONE
+int SS_InitMeasures(void); //DONE
 
 /**
  * \brief Reset the contents of the Receiver Buffer of the Emulated UART.
@@ -152,7 +151,7 @@ void SS_ClearMeasures(Measures *pnt); //DONE
  *  Cleans up the contents of the RxBuffer and resets the RxBufLen variable.
  * \return XPTO
 */
-int SS_ResetRxBuffer();
+int SS_ResetRxBuffer(void);
 
 /**
  * \brief Resets the contents of the Transmitter Buffer of the Emulated UART.
@@ -160,7 +159,7 @@ int SS_ResetRxBuffer();
  * Cleans up the contents of the TxBuffer and resets the TxBufLen variable.
  * \return XPTO
 */
-int SS_ResetTxBuffer();
+int SS_ResetTxBuffer(void);
 
 /**
  * \brief Add an character to the RxBuffer
@@ -181,7 +180,7 @@ int SS_AddCharTx(uint8_t aux);
  * \param
  * \return
 */
-int SS_ProcessCommand();
+int SS_ProcessCommand(void);
 /*********************************************************/
 
 /*****************SENSOR FUNCTIONS********************/
@@ -190,68 +189,68 @@ int SS_ProcessCommand();
  * \param
  * \return
 */
-int SS_RealTimeTemperature();
+int SS_RealTimeTemperature(void);
 
 /**
  * \brief
  * \param
  * \return
 */
-int SS_RealTimeHumidity();
+int SS_RealTimeHumidity(void);
 
 /**
  * \brief
  * \param
  * \return
 */
-int SS_RealTimeCO2();
+int SS_RealTimeCO2(void);
 
 /**
  * \brief
  * \param
  * \return
 */
-int SS_LogTemperature();
+int SS_LogTemperature(void);
 
 /**
  * \brief
  * \param
  * \return
 */
-int SS_LogHumidity();
+int SS_LogHumidity(void);
 
 /**
  * \brief
  * \param
  * \return
 */
-int SS_LogCO2();
+int SS_LogCO2(void);
 
 /**
  * \brief
  * \param
  * \return
 */
-int SS_ResetTemperature();
+int SS_ResetTemperature(void);
 
 /**
  * \brief
  * \param
  * \return
 */
-int SS_ResetHumidity();
+int SS_ResetHumidity(void);
 
 /**
  * \brief
  * \param
  * \return
 */
-int SS_ResetCO2();
+int SS_ResetCO2(void);
 
 /**
  * \brief
  * \param
  * \return
 */
-int SS_ResetALL();
+int SS_ResetALL(void);
 #endif

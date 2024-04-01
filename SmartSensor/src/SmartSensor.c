@@ -23,28 +23,36 @@ static uint8_t RxBufLen = 0;
 
 static uint8_t UART_TxBuffer[BUFFER_SIZE];
 static uint8_t TxBufLen = 0;
+
+static uint8_t Test_Temperature[] = {"-50" "-25" "+00" "+30" "+60"};  /**< Array for storing  testingtemperature measures*/
+static uint8_t Test_Humidity[] = {"000" "020" "040" "060" "080" "100"};         /**< Array for storing testing humidity measures*/
+static uint8_t Test_Air_CO2[] = {"00400" "00800" "01200" "016000" "20000"};            /**< Array for storing  testing dioxide measures*/
+
+static uint8_t Temperature[3*MAX_TEM_RECORD];  /**< Array for storing temperature measures*/
+static uint8_t Humidity[3*MAX_HUM_RECORD];         /**< Array for storing humidity measures*/
+static uint8_t Air_CO2[5*MAX_AIR_RECORD];            /**< Array for storing dioxide measures*/
+
 /*********************************************************/
 
 /***********************FUNCTONS***********************/
-Measures *SS_InitMeasures()
+int SS_InitMeasures(void)
 {
-    Measures *measures;
-    if(measures=malloc(sizeof(Measures)) == NULL) // Allocates memory space for the three measures arrays
+    int i;
+
+    for(i=0;i<(int)sizeof(Temperature);i++)
     {
-        return NULL;                     // If not possible, returns NULL;
+        Temperature[i] = 0;
+        Humidity[i] = 0;
     }
-    else
+
+    for(i=0;i<(int)sizeof(Air_CO2);i++)
     {
-        return measures;
+        Air_CO2[i] = 0;
     }
+    return SS_SUCCESS;
 }
 
-void SS_ClearMeasures(Measures *pnt)
-{
-    free(pnt);
-}
-
-int SS_ResetRxBuffer()
+int SS_ResetRxBuffer(void)
 {
     for(int i=0;i<BUFFER_SIZE;i++)
     {
@@ -54,7 +62,7 @@ int SS_ResetRxBuffer()
     return SS_SUCCESS;
 }
 
-int SS_ResetTxBuffer()
+int SS_ResetTxBuffer(void)
 {
     for(int i=0;i<BUFFER_SIZE;i++)
     {
@@ -87,10 +95,13 @@ int SS_AddCharTx(uint8_t aux)
     return SS_SUCCESS;
 }
 
-int SS_ProcessCom()
+int SS_ProcessCom(void)
 {
         // Check if RxBuffer is empty
-        if (RxBufLen==0) return SS_FAILURE_BUFFEREMPTY;
+        if (RxBufLen==0) 
+        {
+            return SS_FAILURE_BUFFEREMPTY;
+        }
 
         int i,aux;
         uint8_t SensorID; /* Symbol that identifies the type of sensor */
@@ -102,28 +113,7 @@ int SS_ProcessCom()
         }
 
         //If StartFrame exists, analyse the command
-        if(i<RxBufLen)//TODO: CONDITION TO VERIFIED CHECKSUM
-                    /*
-                    if (!SS_CalcCheckSum)
-                    */
-                   
-                    if (UART_RxBuffer[i+4] != EndFrame)
-                        return SS_FAILURE_ENDFRAMENOTFOUND; /**< Return Error if EndFrame is not found.*/
-
-                    // Generate Response
-                    SS_RealTimeTemperature();
-                    SS_RealTimeHumidity();
-                    SS_RealTimeCO2();
-
-                    // Clear command and previous positions on the RxBuffer
-                    aux = i+4;
-                    for(i=0;i<aux;i++)
-                    {
-                        UART_RxBuffer[i]=NULL;
-                        RxBufLen -= 1;
-                    }
-
-                    return SS_SUCCESS;
+        if(i<RxBufLen)
         {
             switch(UART_RxBuffer[i+1])
             {
@@ -146,7 +136,7 @@ int SS_ProcessCom()
                     int aux = i+4;
                     for(i=0;i<aux;i++)
                     {
-                        UART_RxBuffer[i]=NULL;
+                        UART_RxBuffer[i]=0;
                         RxBufLen -= 1;
                     }
 
@@ -178,7 +168,7 @@ int SS_ProcessCom()
                     int aux = i+4;
                     for(i=0;i<aux;i++)
                     {
-                        UART_RxBuffer[i]=NULL;
+                        UART_RxBuffer[i]=0;
                         RxBufLen -= 1;
                     }
 
@@ -203,7 +193,7 @@ int SS_ProcessCom()
                     aux = i+4;
                     for(i=0;i<aux;i++)
                     {
-                        UART_RxBuffer[i]=NULL;
+                        UART_RxBuffer[i]=0;
                         RxBufLen -= 1;
                     }
 
@@ -239,59 +229,64 @@ int SS_ProcessCom()
                     int aux = i+4;
                     for(i=0;i<aux;i++)
                     {
-                        UART_RxBuffer[i]=NULL;
+                        UART_RxBuffer[i]=0;
                         RxBufLen -= 1;
                     }
 
                     return SS_SUCCESS;
                 }
+                default:
+                {
+                    return SS_FAILURE_COMMANDNOTFOUND;
+                }
             }
         }
+        return SS_SUCCESS;
 }
 /***********************FUNCTONS***********************/
 
 /*******************SENSOR FUNCTONS******************/
-int SS_RealTimeTemperature()
+int SS_RealTimeTemperature(void)
 {
     return 0;
 }
 
-int SS_RealTimeHumidity()
+int SS_RealTimeHumidity(void)
 {
     return 0;
 }
 
-int SS_RealTimeCO2()
+int SS_RealTimeCO2(void)
 {
     return 0;
 }
 
-int SS_LogTemperature()
+int SS_LogTemperature(void)
 {
     return 0;
 }
 
-int SS_LogHumidity()
+int SS_LogHumidity(void)
 {
     return 0;
 }
 
-int SS_LogCO2()
+int SS_LogCO2(void)
 {
     return 0;
 }
 
-int SS_ResetTemperature()
+int SS_ResetTemperature(void)
 {
     return 0;
 }
 
-int SS_ResetHumidity()
+int SS_ResetHumidity(void)
 {
     return 0;
 }
 
-int SS_ResetCO2()
+int SS_ResetCO2(void)
 {
     return 0;
 }

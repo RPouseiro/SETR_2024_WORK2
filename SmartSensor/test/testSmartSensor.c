@@ -26,10 +26,4 @@ int main(void) {
 
 // Define your test cases below
 
-void test_SS_InitMeasures(void) {
-    Measures *measures = SS_InitMeasures();
-    TEST_ASSERT_NOT_NULL(measures);
-    SS_ClearMeasures(measures);
-}
-
 // Write similar test cases for other functions
