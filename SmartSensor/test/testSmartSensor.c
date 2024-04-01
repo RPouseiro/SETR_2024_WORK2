@@ -19,12 +19,43 @@ void tearDown(void) {
 
 void test_SmartSensor_CheckValidCmd(void)
 {
+    // Check command 'P' for temperature sensor
 	SS_AddCharRx('#');
 	SS_AddCharRx('P');
 	SS_AddCharRx('T');
 	SS_AddCharRx('0');
 	SS_AddCharRx('!');
-    TEST_ASSERT_EQUAL_INT(0, SS_ProcessCom());
+    TEST_ASSERT_EQUAL_INT(SS_SUCCESS, SS_ProcessCom());
+
+    // Check command 'P' for humidity sensor
+	SS_AddCharRx('#');
+	SS_AddCharRx('P');
+	SS_AddCharRx('H');
+	SS_AddCharRx('0');
+	SS_AddCharRx('!');
+    TEST_ASSERT_EQUAL_INT(SS_SUCCESS, SS_ProcessCom());
+
+    // Check command 'P' for temperature sensor
+	SS_AddCharRx('#');
+	SS_AddCharRx('P');
+	SS_AddCharRx('C');
+	SS_AddCharRx('0');
+	SS_AddCharRx('!');
+    TEST_ASSERT_EQUAL_INT(SS_SUCCESS, SS_ProcessCom());
+
+    SS_AddCharRx('#');
+	SS_AddCharRx('A');
+	SS_AddCharRx('T');
+	SS_AddCharRx('0');
+	SS_AddCharRx('!');
+    TEST_ASSERT_EQUAL_INT(SS_SUCCESS, SS_ProcessCom());
+
+    SS_AddCharRx('#');
+	SS_AddCharRx('P');
+	SS_AddCharRx('T');
+	SS_AddCharRx('0');
+	SS_AddCharRx('!');
+    TEST_ASSERT_EQUAL_INT(SS_SUCCESS, SS_ProcessCom());
     
 }
 

@@ -258,7 +258,7 @@ int SS_ProcessCom(void)
                         }
                         return SS_FAILURE_ENDFRAMENOTFOUND; /* Return Error if EndFrame is not found. */
                     }
-                    
+
                     // Generate Response
                     if (SensorID ==TEMP_SENSOR)
                         SS_ResetTemperature();
@@ -287,13 +287,42 @@ int SS_ProcessCom(void)
                 }
             }
         }
-        return SS_SUCCESS;
+        return SS_FAILURE_STARTFRAMENOTFOUND;
 }
 /***********************FUNCTONS***********************/
 
 /*******************SENSOR FUNCTONS******************/
 int SS_RealTimeTemperature(void)
 {
+    uint8_t data1, data2, data3;
+    int aux;
+
+    aux = rand()%2;
+    if (aux==1)
+    {
+        data1 = '+';
+    }
+    else
+    {
+        data1 = '-';
+    }
+
+    if (data1=='+')
+    {
+        data2 = (uint8_t) rand()%7;
+        if(data2 == '6')
+        {
+            data3 == '0';
+        }
+    }
+    else
+    {
+        data2 = (uint8_t) rand()%6;
+        if(data2 == '5')
+        {
+            data3 == '0';
+        }
+    }
     return 0;
 }
 
