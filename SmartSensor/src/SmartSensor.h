@@ -131,6 +131,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 /*********************************************************//**
  * \brief Initialize the arrays for storing temperature, humidity and air measures.
@@ -176,15 +177,8 @@ int SS_AddCharTx(uint8_t aux);
  * \param aux Character that will be introduced to the buffer.
  * \return -1 if the buffer is bull and does not allow to introduce any new characters or 0 if the execution was flawless.
 */
-/*void getTxBuffer(uint8_t * buf, uint8_t * len)
-{
-    *len = TxBufLen;
-	if(TxBufLen > 0)
-    {
-		memcpy(buf,UART_TxBuffer,*len);
-	}		
-	return;
-}*/
+void getTxBuffer(uint8_t * buf, uint8_t *len);
+
 
 /**
  * \brief

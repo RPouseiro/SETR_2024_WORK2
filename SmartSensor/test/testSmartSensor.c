@@ -34,7 +34,6 @@ void test_SmartSensor_CheckValidCmd(void)
 	SS_AddCharRx('0');
 	SS_AddCharRx(EndFrame);
     TEST_ASSERT_EQUAL_INT(SS_SUCCESS, SS_ProcessCom());
-
     // Check command 'P' for humidity sensor
     SS_AddCharRx(StartFrame);
 	SS_AddCharRx('P');
@@ -119,6 +118,27 @@ void test_SmartSensor_CheckInvalidCmd(void)
 
 }
 
+
+
+void test_SmartSensor_Temperature(void){
+	SS_ResetRxBuffer();
+	SS_ResetTxBuffer();
+	SS_AddCharRx(StartFrame);
+	SS_AddCharRx('P');
+	SS_AddCharRx(TEMP_SENSOR);
+	SS_AddCharRx('0');
+	SS_AddCharRx(EndFrame);
+	SS_ProcessCom();
+	uint8_t buffer[BUFFER_SIZE];
+	uint8_t len;
+	getTxBuffer(buffer, &len);
+	TEST_ASSERT_EQUAL_INT(8, len);
+	TEST_ASSERT_EQUAL_INT('#',buffer[0]);
+	TEST_ASSERT_EQUAL_INT('!',buffer[7]);
+}
+
+
+
 int main(void) {
     printf("\n Smart Sensor interface emulation Unit Testing \n");
     /* Init UART RX and TX buffers */
@@ -129,6 +149,9 @@ int main(void) {
     UNITY_BEGIN(); 
     RUN_TEST(test_SmartSensor_CheckValidCmd);
     RUN_TEST(test_SmartSensor_CheckInvalidCmd); 
+	RUN_TEST(test_SmartSensor_Temperature); 
+
+	test_SmartSensor_Temperature();
     return UNITY_END();
 }
 

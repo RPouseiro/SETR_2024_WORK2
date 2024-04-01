@@ -14,8 +14,8 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-
 #include "SmartSensor.h"
+#include <time.h>
 
 /******************INTERNAL VARIABLES******************/
 static uint8_t UART_RxBuffer[BUFFER_SIZE];
@@ -81,24 +81,25 @@ int SS_AddCharRx(uint8_t aux)
 }
 
 int SS_AddCharTx(uint8_t aux)
-{
+{   
+
     //Check if buffer is full and return error
     if (TxBufLen >= BUFFER_SIZE)    return SS_FAILURE_BUFFERFULL;
-
-    UART_TxBuffer[RxBufLen] = aux;
+    UART_TxBuffer[TxBufLen] = aux;
     TxBufLen += 1;
-
     return SS_SUCCESS;
 }
 
-/*void getTxBuffer(uint8_t * buf, uint8_t * len)
+void getTxBuffer(uint8_t * buf, uint8_t *len)
 {
     *len = TxBufLen;
 	if(TxBufLen > 0) {
-		memcpy(buf,UART_TxBuffer,*len);
+		memcpy(buf,UART_TxBuffer, *len);
+        printf("TESTE\n");
+        printf("%s \n", &UART_TxBuffer);
 	}		
 	return;
-}*/
+}
 
 int SS_ProcessCom(void)
 {
@@ -185,6 +186,7 @@ int SS_ProcessCom(void)
 
                     // Generate Response
                     if (SensorID ==TEMP_SENSOR)
+                        printf("METEU CENAS\n");
                         SS_RealTimeTemperature(UART_RxBuffer[i+1]);
                     if (SensorID == HUM_SENSOR )
                         SS_RealTimeHumidity(UART_RxBuffer[i+1]);
@@ -306,12 +308,16 @@ int SS_ProcessCom(void)
 /*******************SENSOR FUNCTONS******************/
 int SS_RealTimeTemperature(uint8_t CMD)
 {
+
+
+    srand ( time(NULL) );
     uint8_t data1, data2, data3;
     int i,aux;
 
     // Generate random value inside of range for temperature
     aux = rand()%2;
-    if (aux==1)
+    printf("RAND: %d\n", aux);
+    if (aux)
     {
         data1 = '+';
     }
@@ -322,19 +328,25 @@ int SS_RealTimeTemperature(uint8_t CMD)
 
     if (data1=='+')
     {
-        data2 = (uint8_t) rand()%7;
-        if(data2 == '6')
+        data2 =  (uint8_t)(rand()%7);
+        if(data2 == 6)
         {
-            data3 == '0';
+            data3 = 0;
         }
+        else{
+            data3 = (uint8_t)(rand()%10);
+        } 
     }
     else
     {
-        data2 = (uint8_t) rand()%6;
-        if(data2 == '5')
+        data2 = (uint8_t)(rand()%6);
+        if(data2 == 5)
         {
-            data3 == '0';
+            data3 = 0;
         }
+        else{
+            data3 = (uint8_t)(rand()%10);
+        } 
     }
 
     // Save Measure
@@ -348,16 +360,19 @@ int SS_RealTimeTemperature(uint8_t CMD)
             break;
         }
     }
-
     if (i!=MAX_TEM_RECORD)
-    {
+    {   
+        printf("%hhu\n",data1);
+        printf("%hhu\n",data2);
+        printf("%hhu\n",data3);
+
         //Insert Command
         SS_AddCharTx(StartFrame);
         SS_AddCharTx('p');
         SS_AddCharTx('t');
         SS_AddCharTx(data1);
-        SS_AddCharTx(data2);
-        SS_AddCharTx(data3);
+        SS_AddCharTx(48+data2);
+        SS_AddCharTx(48+data3);
         SS_AddCharTx('0');
         SS_AddCharTx('!');
 
