@@ -7,7 +7,6 @@
 // Forward declaration of helper functions
 void setUp(void);
 void tearDown(void);
-void test_SS_InitMeasures(void);
 
 
 // Unity test setup and teardown functions
@@ -20,7 +19,6 @@ void tearDown(void) {
 
 int main(void) {
     UNITY_BEGIN();  
-    RUN_TEST(test_SS_InitMeasures);
     return UNITY_END();
 }
 

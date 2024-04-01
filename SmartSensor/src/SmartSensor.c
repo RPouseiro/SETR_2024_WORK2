@@ -290,3 +290,8 @@ int SS_ResetCO2(void)
 {
     return 0;
 }
+
+int SS_ResetALL(void)
+{
+    return 0;
+}
