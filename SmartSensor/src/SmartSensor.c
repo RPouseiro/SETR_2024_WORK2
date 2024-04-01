@@ -91,14 +91,14 @@ int SS_AddCharTx(uint8_t aux)
     return SS_SUCCESS;
 }
 
-void getTxBuffer(uint8_t * buf, uint8_t * len)
+/*void getTxBuffer(uint8_t * buf, uint8_t * len)
 {
     *len = TxBufLen;
 	if(TxBufLen > 0) {
 		memcpy(buf,UART_TxBuffer,*len);
 	}		
 	return;
-}
+}*/
 
 int SS_ProcessCom(void)
 {
@@ -237,7 +237,7 @@ int SS_ProcessCom(void)
                 case 'R':
                 {
                     SensorID = UART_RxBuffer[i+2];
-                    if (SensorID != TEMP_SENSOR && SensorID != HUM_SENSOR && SensorID != AIR_SENSOR)
+                    if (SensorID != TEMP_SENSOR && SensorID != HUM_SENSOR && SensorID != AIR_SENSOR && SensorID != ALL)
                     {
                         aux = i+2;
                         for(i=0;i<aux;i++)

@@ -176,7 +176,7 @@ int SS_AddCharTx(uint8_t aux);
  * \param aux Character that will be introduced to the buffer.
  * \return -1 if the buffer is bull and does not allow to introduce any new characters or 0 if the execution was flawless.
 */
-void getTxBuffer(uint8_t * buf, uint8_t * len)
+/*void getTxBuffer(uint8_t * buf, uint8_t * len)
 {
     *len = TxBufLen;
 	if(TxBufLen > 0)
@@ -184,14 +184,14 @@ void getTxBuffer(uint8_t * buf, uint8_t * len)
 		memcpy(buf,UART_TxBuffer,*len);
 	}		
 	return;
-}
+}*/
 
 /**
  * \brief
  * \param
  * \return
 */
-int SS_ProcessCommand(void);
+int SS_ProcessCom(void);
 /*********************************************************/
 
 /*****************SENSOR FUNCTIONS********************/
