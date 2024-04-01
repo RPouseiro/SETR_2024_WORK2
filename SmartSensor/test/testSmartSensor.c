@@ -120,23 +120,45 @@ void test_SmartSensor_CheckInvalidCmd(void)
 
 
 
-void test_SmartSensor_Temperature(void){
-	SS_ResetRxBuffer();
+void test_SmartSensor_Temperature(void)
+{
+    uint8_t buffer[BUFFER_SIZE];
+	uint8_t len;
+    SS_ResetRxBuffer();
 	SS_ResetTxBuffer();
+
 	SS_AddCharRx(StartFrame);
 	SS_AddCharRx('P');
 	SS_AddCharRx(TEMP_SENSOR);
 	SS_AddCharRx('0');
 	SS_AddCharRx(EndFrame);
 	SS_ProcessCom();
-	uint8_t buffer[BUFFER_SIZE];
-	uint8_t len;
+	
 	getTxBuffer(buffer, &len);
 	TEST_ASSERT_EQUAL_INT(8, len);
 	TEST_ASSERT_EQUAL_INT('#',buffer[0]);
 	TEST_ASSERT_EQUAL_INT('!',buffer[7]);
 }
 
+void test_SmartSensor_Humidity(void)
+{
+    uint8_t buffer[BUFFER_SIZE];
+	uint8_t len;
+    SS_ResetRxBuffer();
+	SS_ResetTxBuffer();
+
+	SS_AddCharRx(StartFrame);
+	SS_AddCharRx('P');
+	SS_AddCharRx(HUM_SENSOR);
+	SS_AddCharRx('0');
+	SS_AddCharRx(EndFrame);
+	SS_ProcessCom();
+	
+	getTxBuffer(buffer, &len);
+	TEST_ASSERT_EQUAL_INT(8, len);
+	TEST_ASSERT_EQUAL_INT('#',buffer[0]);
+	TEST_ASSERT_EQUAL_INT('!',buffer[7]);
+}
 
 
 int main(void) {
@@ -150,6 +172,7 @@ int main(void) {
     RUN_TEST(test_SmartSensor_CheckValidCmd);
     RUN_TEST(test_SmartSensor_CheckInvalidCmd); 
 	RUN_TEST(test_SmartSensor_Temperature); 
+    RUN_TEST(test_SmartSensor_Humidity);
 
 	test_SmartSensor_Temperature();
     return UNITY_END();
