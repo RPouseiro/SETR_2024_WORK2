@@ -26,7 +26,7 @@ static uint8_t TxBufLen = 0;
 
 static uint8_t Test_Temperature[] = {"-50" "-25" "+00" "+30" "+60"};  /**< Array for storing  testingtemperature measures*/
 static uint8_t Test_Humidity[] = {"000" "020" "040" "060" "080" "100"};         /**< Array for storing testing humidity measures*/
-static uint8_t Test_Air_CO2[] = {"00400" "00800" "01200" "016000" "20000"};            /**< Array for storing  testing dioxide measures*/
+static uint8_t Test_Air_CO2[] = {"00400" "00800" "01600" "3200" "20000"};            /**< Array for storing  testing dioxide measures*/
 
 static uint8_t Temperature[3*MAX_TEM_RECORD];  /**< Array for storing temperature measures*/
 static uint8_t Humidity[3*MAX_HUM_RECORD];         /**< Array for storing humidity measures*/
@@ -125,8 +125,15 @@ int SS_ProcessCom(void)
                     */
                    
                     if (UART_RxBuffer[i+4] != EndFrame)
+                    {
+                        aux = i+3;
+                        for(i=0;i<aux;i++)
+                        {
+                            UART_RxBuffer[i]=0;
+                            RxBufLen -= 1;
+                        }
                         return SS_FAILURE_ENDFRAMENOTFOUND; /* Return Error if EndFrame is not found. */
-
+                    }
                     // Generate Response
                     SS_RealTimeTemperature();
                     SS_RealTimeHumidity();
@@ -146,15 +153,30 @@ int SS_ProcessCom(void)
                 {
                     SensorID = UART_RxBuffer[i+2];
                     if (SensorID != TEMP_SENSOR && SensorID != HUM_SENSOR && SensorID != AIR_SENSOR)
+                    {
+                        aux = i+2;
+                        for(i=0;i<aux;i++)
+                        {
+                            UART_RxBuffer[i]=0;
+                            RxBufLen -= 1;
+                        }
                         return SS_FAILURE_INVALIDDATA; /* Return Error if SensorID is invalid. */
-                    
+                    }
                     //TODO: CONDITION TO VERIFIED CHECKSUM
                     /*
                     if (!SS_CalcCheckSum)
                     */
                    
                     if (UART_RxBuffer[i+4] != EndFrame)
+                    {
+                        aux = i+3;
+                        for(i=0;i<aux;i++)
+                        {
+                            UART_RxBuffer[i]=0;
+                            RxBufLen -= 1;
+                        }
                         return SS_FAILURE_ENDFRAMENOTFOUND; /* Return Error if EndFrame is not found. */
+                    }
 
                     // Generate Response
                     if (SensorID ==TEMP_SENSOR)
@@ -182,7 +204,15 @@ int SS_ProcessCom(void)
                     */
                    
                     if (UART_RxBuffer[i+4] != EndFrame)
-                        return SS_FAILURE_ENDFRAMENOTFOUND; /**< Return Error if EndFrame is not found.*/
+                    {
+                        aux = i+3;
+                        for(i=0;i<aux;i++)
+                        {
+                            UART_RxBuffer[i]=0;
+                            RxBufLen -= 1;
+                        }
+                        return SS_FAILURE_ENDFRAMENOTFOUND; /* Return Error if EndFrame is not found. */
+                    }
 
                     // Generate Response
                     SS_LogTemperature();
@@ -203,7 +233,15 @@ int SS_ProcessCom(void)
                 {
                     SensorID = UART_RxBuffer[i+2];
                     if (SensorID != TEMP_SENSOR && SensorID != HUM_SENSOR && SensorID != AIR_SENSOR)
+                    {
+                        aux = i+2;
+                        for(i=0;i<aux;i++)
+                        {
+                            UART_RxBuffer[i]=0;
+                            RxBufLen -= 1;
+                        }
                         return SS_FAILURE_INVALIDDATA; /* Return Error if SensorID is invalid. */
+                    }
                     
                     //TODO: CONDITION TO VERIFIED CHECKSUM
                     /*
@@ -211,8 +249,16 @@ int SS_ProcessCom(void)
                     */
                    
                     if (UART_RxBuffer[i+4] != EndFrame)
+                    {
+                        aux = i+3;
+                        for(i=0;i<aux;i++)
+                        {
+                            UART_RxBuffer[i]=0;
+                            RxBufLen -= 1;
+                        }
                         return SS_FAILURE_ENDFRAMENOTFOUND; /* Return Error if EndFrame is not found. */
-
+                    }
+                    
                     // Generate Response
                     if (SensorID ==TEMP_SENSOR)
                         SS_ResetTemperature();
@@ -241,8 +287,7 @@ int SS_ProcessCom(void)
                 }
             }
         }
-        SS_ResetRxBuffer();
-        return SS_FAILURE_STARTFRAMENOTFOUND;
+        return SS_SUCCESS;
 }
 /***********************FUNCTONS***********************/
 
