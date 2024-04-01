@@ -24,7 +24,7 @@ void test_SmartSensor_CheckValidCmd(void)
 	SS_AddCharRx('T');
 	SS_AddCharRx('0');
 	SS_AddCharRx('!');
-    TEST_ASSERT_EQUAL_INT(0, SS_ProcessCom());
+    TEST_ASSERT_EQUAL_INT(SS_SUCCESS, SS_ProcessCom());
     
 }
 
@@ -36,14 +36,21 @@ void test_SmartSensor_CheckInvalidCmd(void)
 	SS_AddCharRx('T');  
 	SS_AddCharRx('0');
 	SS_AddCharRx('!');
-    TEST_ASSERT_NOT_EQUAL_INT(0, SS_ProcessCom());
+    TEST_ASSERT_EQUAL_INT(SS_FAILURE_STARTFRAMENOTFOUND, SS_ProcessCom());
     SS_AddCharRx('#');
 	SS_AddCharRx('P');
 	SS_AddCharRx('t');
 	SS_AddCharRx('0');
 	SS_AddCharRx('!');
-    TEST_ASSERT_NOT_EQUAL_INT(0, SS_ProcessCom());
- 
+    TEST_ASSERT_EQUAL_INT(SS_FAILURE_INVALIDDATA, SS_ProcessCom());
+    SS_AddCharRx('#');
+	SS_AddCharRx('P');
+	SS_AddCharRx('T');
+	SS_AddCharRx('0');
+	SS_AddCharRx('E');
+    TEST_ASSERT_EQUAL_INT(SS_FAILURE_ENDFRAMENOTFOUND, SS_ProcessCom());
+    SS_ResetRxBuffer();
+    TEST_ASSERT_EQUAL_INT(SS_FAILURE_BUFFEREMPTY, SS_ProcessCom());
 
 }
 
@@ -55,9 +62,8 @@ int main(void) {
 
 
     UNITY_BEGIN(); 
-    RUN_TEST(test_SmartSensor_CheckInvalidCmd); 
     RUN_TEST(test_SmartSensor_CheckValidCmd);
-
+    RUN_TEST(test_SmartSensor_CheckInvalidCmd); 
     return UNITY_END();
 }
 

@@ -287,7 +287,8 @@ int SS_ProcessCom(void)
                 }
             }
         }
-        return SS_SUCCESS;
+
+        return SS_FAILURE_STARTFRAMENOTFOUND;
 }
 /***********************FUNCTONS***********************/
 
