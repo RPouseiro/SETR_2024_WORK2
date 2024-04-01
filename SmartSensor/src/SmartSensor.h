@@ -107,14 +107,25 @@
  * Indicates a failure at the execution of the called function. 
 */
 #define SS_FAILURE_ENDFRAMENOTFOUND -4
-
 /**
  * \brief Alias for failed return.
  * 
  * Indicates a failure at the execution of the called function. 
 */
 #define SS_FAILURE_COMMANDNOTFOUND -5
+/**
+ * \brief Alias for failed return.
+ * 
+ * Indicates a failure at the execution of the called function. 
+*/
 
+
+#define SS_FAILURE_STARTFRAMENOTFOUND -6
+/**
+ * \brief Alias for failed return.
+ * 
+ * Indicates a failure at the execution of the called function. 
+*/
 /*********************************************************/
 
 #include <stdint.h>

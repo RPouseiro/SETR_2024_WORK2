@@ -17,8 +17,47 @@ void tearDown(void) {
     return;
 }
 
+void test_SmartSensor_CheckValidCmd(void)
+{
+	SS_AddCharRx('#');
+	SS_AddCharRx('P');
+	SS_AddCharRx('T');
+	SS_AddCharRx('0');
+	SS_AddCharRx('!');
+    TEST_ASSERT_EQUAL_INT(0, SS_ProcessCom());
+    
+}
+
+
+void test_SmartSensor_CheckInvalidCmd(void)
+{
+    SS_AddCharRx('d');
+	SS_AddCharRx('P');
+	SS_AddCharRx('T');  
+	SS_AddCharRx('0');
+	SS_AddCharRx('!');
+    TEST_ASSERT_NOT_EQUAL_INT(0, SS_ProcessCom());
+    SS_AddCharRx('#');
+	SS_AddCharRx('P');
+	SS_AddCharRx('t');
+	SS_AddCharRx('0');
+	SS_AddCharRx('!');
+    TEST_ASSERT_NOT_EQUAL_INT(0, SS_ProcessCom());
+ 
+
+}
+
 int main(void) {
-    UNITY_BEGIN();  
+    printf("\n Smart Sensor interface emulation Unit Testing \n");
+    /* Init UART RX and TX buffers */
+	SS_ResetRxBuffer();
+	SS_ResetTxBuffer();
+
+
+    UNITY_BEGIN(); 
+    RUN_TEST(test_SmartSensor_CheckInvalidCmd); 
+    RUN_TEST(test_SmartSensor_CheckValidCmd);
+
     return UNITY_END();
 }
 

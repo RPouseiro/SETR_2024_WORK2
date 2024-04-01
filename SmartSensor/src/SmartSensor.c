@@ -241,7 +241,8 @@ int SS_ProcessCom(void)
                 }
             }
         }
-        return SS_SUCCESS;
+        SS_ResetRxBuffer();
+        return SS_FAILURE_STARTFRAMENOTFOUND;
 }
 /***********************FUNCTONS***********************/
 
