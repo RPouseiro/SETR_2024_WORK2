@@ -89,5 +89,209 @@ int SS_AddCharTx(uint8_t aux)
 
 int SS_ProcessCom()
 {
+        // Check if RxBuffer is empty
+        if (RxBufLen==0) return SS_FAILURE_BUFFEREMPTY;
 
+        int i,aux;
+        uint8_t SensorID; /* Symbol that identifies the type of sensor */
+
+        // Find index of StartFrame
+        for (i=0; i<RxBufLen;i++)
+        {
+            if(UART_RxBuffer[i]==StartFrame) break;
+        }
+
+        //If StartFrame exists, analyse the command
+        if(i<RxBufLen)//TODO: CONDITION TO VERIFIED CHECKSUM
+                    /*
+                    if (!SS_CalcCheckSum)
+                    */
+                   
+                    if (UART_RxBuffer[i+4] != EndFrame)
+                        return SS_FAILURE_ENDFRAMENOTFOUND; /**< Return Error if EndFrame is not found.*/
+
+                    // Generate Response
+                    SS_RealTimeTemperature();
+                    SS_RealTimeHumidity();
+                    SS_RealTimeCO2();
+
+                    // Clear command and previous positions on the RxBuffer
+                    int aux = i+4;
+                    for(i=0;i<aux;i++)
+                    {
+                        UART_RxBuffer[i]=NULL;
+                        RxBufLen -= 1;
+                    }
+
+                    return SS_SUCCESS;
+        {
+            switch(UART_RxBuffer[i+1])
+            {
+                case 'A':
+                {    
+                    //TODO: CONDITION TO VERIFIED CHECKSUM
+                    /*
+                    if (!SS_CalcCheckSum)
+                    */
+                   
+                    if (UART_RxBuffer[i+4] != EndFrame)
+                        return SS_FAILURE_ENDFRAMENOTFOUND; /* Return Error if EndFrame is not found. */
+
+                    // Generate Response
+                    SS_RealTimeTemperature();
+                    SS_RealTimeHumidity();
+                    SS_RealTimeCO2();
+
+                    // Clear command and previous positions on the RxBuffer
+                    int aux = i+4;
+                    for(i=0;i<aux;i++)
+                    {
+                        UART_RxBuffer[i]=NULL;
+                        RxBufLen -= 1;
+                    }
+
+                    return SS_SUCCESS;
+                }
+                case 'P':
+                {
+                    SensorID = UART_RxBuffer[i+2];
+                    if (SensorID != TEMP_SENSOR && SensorID != HUM_SENSOR && SensorID != AIR_SENSOR)
+                        return SS_FAILURE_INVALIDDATA; /* Return Error if SensorID is invalid. */
+                    
+                    //TODO: CONDITION TO VERIFIED CHECKSUM
+                    /*
+                    if (!SS_CalcCheckSum)
+                    */
+                   
+                    if (UART_RxBuffer[i+4] != EndFrame)
+                        return SS_FAILURE_ENDFRAMENOTFOUND; /* Return Error if EndFrame is not found. */
+
+                    // Generate Response
+                    if (SensorID ==TEMP_SENSOR)
+                        SS_RealTimeTemperature();
+                    if (SensorID == HUM_SENSOR )
+                        SS_RealTimeHumidity();
+                    if (SensorID == AIR_SENSOR)
+                        SS_RealTimeCO2();
+
+                    // Clear command and previous positions on the RxBuffer
+                    int aux = i+4;
+                    for(i=0;i<aux;i++)
+                    {
+                        UART_RxBuffer[i]=NULL;
+                        RxBufLen -= 1;
+                    }
+
+                    return SS_SUCCESS;
+                }
+                case 'L':
+                {
+                    //TODO: CONDITION TO VERIFIED CHECKSUM
+                    /*
+                    if (!SS_CalcCheckSum)
+                    */
+                   
+                    if (UART_RxBuffer[i+4] != EndFrame)
+                        return SS_FAILURE_ENDFRAMENOTFOUND; /**< Return Error if EndFrame is not found.*/
+
+                    // Generate Response
+                    SS_LogTemperature();
+                    SS_LogHumidity();
+                    SS_LogCO2();
+
+                    // Clear command and previous positions on the RxBuffer
+                    aux = i+4;
+                    for(i=0;i<aux;i++)
+                    {
+                        UART_RxBuffer[i]=NULL;
+                        RxBufLen -= 1;
+                    }
+
+                    return SS_SUCCESS;
+                }
+                case 'R':
+                {
+                    SensorID = UART_RxBuffer[i+2];
+                    if (SensorID != TEMP_SENSOR && SensorID != HUM_SENSOR && SensorID != AIR_SENSOR)
+                        return SS_FAILURE_INVALIDDATA; /* Return Error if SensorID is invalid. */
+                    
+                    //TODO: CONDITION TO VERIFIED CHECKSUM
+                    /*
+                    if (!SS_CalcCheckSum)
+                    */
+                   
+                    if (UART_RxBuffer[i+4] != EndFrame)
+                        return SS_FAILURE_ENDFRAMENOTFOUND; /* Return Error if EndFrame is not found. */
+
+                    // Generate Response
+                    if (SensorID ==TEMP_SENSOR)
+                        SS_ResetTemperature();
+                    if (SensorID == HUM_SENSOR )
+                        SS_ResetHumidity();
+                    if (SensorID == AIR_SENSOR)
+                        SS_ResetCO2();
+                    if (SensorID == ALL)
+                    {
+                        SS_ResetALL();
+                    }
+
+                    // Clear command and previous positions on the RxBuffer
+                    int aux = i+4;
+                    for(i=0;i<aux;i++)
+                    {
+                        UART_RxBuffer[i]=NULL;
+                        RxBufLen -= 1;
+                    }
+
+                    return SS_SUCCESS;
+                }
+            }
+        }
+}
+/***********************FUNCTONS***********************/
+
+/*******************SENSOR FUNCTONS******************/
+int SS_RealTimeTemperature()
+{
+    return 0;
+}
+
+int SS_RealTimeHumidity()
+{
+    return 0;
+}
+
+int SS_RealTimeCO2()
+{
+    return 0;
+}
+
+int SS_LogTemperature()
+{
+    return 0;
+}
+
+int SS_LogHumidity()
+{
+    return 0;
+}
+
+int SS_LogCO2()
+{
+    return 0;
+}
+
+int SS_ResetTemperature()
+{
+    return 0;
+}
+
+int SS_ResetHumidity()
+{
+    return 0;
+}
+
+int SS_ResetCO2()
+{
+    return 0;
 }

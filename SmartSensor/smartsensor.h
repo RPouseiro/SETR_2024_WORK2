@@ -42,6 +42,36 @@
 */
 #define BUFFER_SIZE 20
 
+/**
+ * \brief Symbol that identifies the start of frame.
+*/
+#define StartFrame '#'
+
+/**
+ * \brief Symbol that identifies the end of frame.
+*/
+#define EndFrame '!'
+
+/**
+ * \brief Symbol that identifies the temperature sensor.
+*/
+#define TEMP_SENSOR 'T'
+
+/**
+ * \brief Symbol that identifies the humidity sensor.
+*/
+#define HUM_SENSOR 'H'
+
+/**
+ * \brief Symbol that identifies the air sensor.
+*/
+#define AIR_SENSOR 'C'
+
+/**
+ * \brief Symbol that identifies the air sensor.
+*/
+#define ALL 'A'
+
 /************************ERRORS************************/
 /**
  * \brief Alias for sucessfull return.
@@ -56,6 +86,27 @@
  * Indicates a failure at the execution of the called function. 
 */
 #define SS_FAILURE_BUFFERFULL -1
+
+/**
+ * \brief Alias for failed return.
+ * 
+ * Indicates a failure at the execution of the called function. 
+*/
+#define SS_FAILURE_BUFFEREMPTY -2
+
+/**
+ * \brief Alias for failed return.
+ * 
+ * Indicates a failure at the execution of the called function. 
+*/
+#define SS_FAILURE_INVALIDDATA -3
+
+/**
+ * \brief Alias for failed return.
+ * 
+ * Indicates a failure at the execution of the called function. 
+*/
+#define SS_FAILURE_ENDFRAMENOTFOUND -4
 
 /*********************************************************/
 
@@ -125,4 +176,82 @@ int SS_AddCharRx(uint8_t aux);
 */
 int SS_AddCharTx(uint8_t aux);
 
+/**
+ * \brief
+ * \param
+ * \return
+*/
+int SS_ProcessCommand();
+/*********************************************************/
+
+/*****************SENSOR FUNCTIONS********************/
+/**
+ * \brief
+ * \param
+ * \return
+*/
+int SS_RealTimeTemperature();
+
+/**
+ * \brief
+ * \param
+ * \return
+*/
+int SS_RealTimeHumidity();
+
+/**
+ * \brief
+ * \param
+ * \return
+*/
+int SS_RealTimeCO2();
+
+/**
+ * \brief
+ * \param
+ * \return
+*/
+int SS_LogTemperature();
+
+/**
+ * \brief
+ * \param
+ * \return
+*/
+int SS_LogHumidity();
+
+/**
+ * \brief
+ * \param
+ * \return
+*/
+int SS_LogCO2();
+
+/**
+ * \brief
+ * \param
+ * \return
+*/
+int SS_ResetTemperature();
+
+/**
+ * \brief
+ * \param
+ * \return
+*/
+int SS_ResetHumidity();
+
+/**
+ * \brief
+ * \param
+ * \return
+*/
+int SS_ResetCO2();
+
+/**
+ * \brief
+ * \param
+ * \return
+*/
+int SS_ResetALL();
 #endif
