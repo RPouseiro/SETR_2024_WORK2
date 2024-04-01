@@ -324,6 +324,14 @@ int SS_RealTimeTemperature(void)
             data3 == '0';
         }
     }
+
+    //Insert Command
+    SS_AddCharTx(StartFrame);
+    SS_AddCharRx('p');
+    SS_AddCharRx('t');
+    SS_AddCharRx(data1);
+    SS_AddCharRx(data2);
+    SS_AddCharRx(data3);
     return 0;
 }
 
