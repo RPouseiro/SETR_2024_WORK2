@@ -19,13 +19,77 @@ void tearDown(void) {
 
 void test_SmartSensor_CheckValidCmd(void)
 {
+    // Check command 'A'
+	SS_AddCharRx(StartFrame);
+	SS_AddCharRx('A');
+	SS_AddCharRx('0');  //Irrelevant
+	SS_AddCharRx('0');
+	SS_AddCharRx(EndFrame);
+    TEST_ASSERT_EQUAL_INT(SS_SUCCESS, SS_ProcessCom());
+
     // Check command 'P' for temperature sensor
+	SS_AddCharRx(StartFrame);
+	SS_AddCharRx('P');
+	SS_AddCharRx(TEMP_SENSOR);
+	SS_AddCharRx('0');
+	SS_AddCharRx(EndFrame);
+    TEST_ASSERT_EQUAL_INT(SS_SUCCESS, SS_ProcessCom());
+
+    // Check command 'P' for humidity sensor
+    SS_AddCharRx(StartFrame);
+	SS_AddCharRx('P');
+	SS_AddCharRx(HUM_SENSOR);
+	SS_AddCharRx('0');
+	SS_AddCharRx(EndFrame);
+    TEST_ASSERT_EQUAL_INT(SS_SUCCESS, SS_ProcessCom());;
+
+    // Check command 'P' for humidity sensor
 	SS_AddCharRx('#');
 	SS_AddCharRx('P');
-	SS_AddCharRx('T');
+	SS_AddCharRx(AIR_SENSOR);
 	SS_AddCharRx('0');
 	SS_AddCharRx('!');
     TEST_ASSERT_EQUAL_INT(SS_SUCCESS, SS_ProcessCom());
+
+    // Check command 'L'
+	SS_AddCharRx('#');
+	SS_AddCharRx('L');
+	SS_AddCharRx('0');  //Irrelevant
+	SS_AddCharRx('0');
+	SS_AddCharRx('!');
+
+    // Check command 'R' for temperature sensor
+    SS_AddCharRx(StartFrame);
+	SS_AddCharRx('R');
+	SS_AddCharRx(TEMP_SENSOR);
+	SS_AddCharRx('0');
+	SS_AddCharRx(EndFrame);
+    TEST_ASSERT_EQUAL_INT(SS_SUCCESS, SS_ProcessCom());
+
+    // Check command 'R' for humidity sensor
+    SS_AddCharRx(StartFrame);
+	SS_AddCharRx('R');
+	SS_AddCharRx(HUM_SENSOR);
+	SS_AddCharRx('0');
+	SS_AddCharRx(EndFrame);
+    TEST_ASSERT_EQUAL_INT(SS_SUCCESS, SS_ProcessCom());
+
+    // Check command 'R' for air sensor
+    SS_AddCharRx(StartFrame);
+	SS_AddCharRx('R');
+	SS_AddCharRx(AIR_SENSOR);
+	SS_AddCharRx('0');
+	SS_AddCharRx(EndFrame);
+    TEST_ASSERT_EQUAL_INT(SS_SUCCESS, SS_ProcessCom());
+
+    // Check command 'R' for all sensors
+    SS_AddCharRx(StartFrame);
+	SS_AddCharRx('R');
+	SS_AddCharRx(ALL);
+	SS_AddCharRx('0');
+	SS_AddCharRx(EndFrame);
+    TEST_ASSERT_EQUAL_INT(SS_SUCCESS, SS_ProcessCom());
+    
     
 }
 

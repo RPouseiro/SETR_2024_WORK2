@@ -133,21 +133,6 @@
 #include <stdlib.h>
 
 /*********************************************************//**
- * \brief Struct for the pointers of each unity that can be stored by the smart-sensor
- * 
- * Struct for storing the information about the pointers of each unity measure stored (temperature, humidity and Co2)
-*/
-typedef struct Measures Measures;
-struct Measures
-{
-    uint8_t Temperature[3*MAX_TEM_RECORD];  /**< Array for storing temperature measures*/
-    uint8_t Humidity[3*MAX_HUM_RECORD];         /**< Array for storing humidity measures*/
-    uint8_t Air_CO2[5*MAX_AIR_RECORD];            /**< Array for storing dioxide measures*/
-};
-
-/*********************************************************/
-
-/*********************************************************//**
  * \brief Initialize the arrays for storing temperature, humidity and air measures.
  * 
  * Allocates in memory space for three arrays of fixed size to allow the sensor to store measures of temperature, humidity and CO2 measures.
@@ -187,6 +172,21 @@ int SS_AddCharRx(uint8_t aux);
 int SS_AddCharTx(uint8_t aux);
 
 /**
+ * \brief Add an character to the RxBuffer
+ * \param aux Character that will be introduced to the buffer.
+ * \return -1 if the buffer is bull and does not allow to introduce any new characters or 0 if the execution was flawless.
+*/
+void getTxBuffer(uint8_t * buf, uint8_t * len)
+{
+    *len = TxBufLen;
+	if(TxBufLen > 0)
+    {
+		memcpy(buf,UART_TxBuffer,*len);
+	}		
+	return;
+}
+
+/**
  * \brief
  * \param
  * \return
@@ -200,21 +200,21 @@ int SS_ProcessCommand(void);
  * \param
  * \return
 */
-int SS_RealTimeTemperature(void);
+int SS_RealTimeTemperature(uint8_t CMD);
 
 /**
  * \brief
  * \param
  * \return
 */
-int SS_RealTimeHumidity(void);
+int SS_RealTimeHumidity(uint8_t CMD);
 
 /**
  * \brief
  * \param
  * \return
 */
-int SS_RealTimeCO2(void);
+int SS_RealTimeCO2(uint8_t CMD);
 
 /**
  * \brief
