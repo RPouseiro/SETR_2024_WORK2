@@ -93,7 +93,6 @@ void test_SmartSensor_CheckValidCmd(void)
     
 }
 
-
 void test_SmartSensor_CheckInvalidCmd(void)
 {
     SS_AddCharRx('d');
@@ -118,8 +117,6 @@ void test_SmartSensor_CheckInvalidCmd(void)
     TEST_ASSERT_EQUAL_INT(SS_FAILURE_BUFFEREMPTY, SS_ProcessCom());
 
 }
-
-
 
 void test_SmartSensor_Temperature(void)
 {
@@ -160,7 +157,6 @@ void test_SmartSensor_Humidity(void)
 	TEST_ASSERT_EQUAL_INT('#',buffer[0]);
 	TEST_ASSERT_EQUAL_INT('!',buffer[7]);
 }
-
 
 void test_SmartSensor_CO2(void)
 {

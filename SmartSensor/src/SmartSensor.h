@@ -43,6 +43,34 @@
 #define BUFFER_SIZE 128
 
 /**
+ * \brief Maximum size of transmitter and receiver buffer.
+ * 
+ * XPTO
+*/
+#define LOG_SAMPLES 20
+
+/**
+ * \brief Maximum size of transmitter and receiver buffer.
+ * 
+ * XPTO
+*/
+#define TEMP_FRAME_SIZE 8
+
+/**
+ * \brief Maximum size of transmitter and receiver buffer.
+ * 
+ * XPTO
+*/
+#define HUM_FRAME_SIZE 8
+
+/**
+ * \brief Maximum size of transmitter and receiver buffer.
+ * 
+ * XPTO
+*/
+#define CO2_FRAME_SIZE 10
+
+/**
  * \brief Symbol that identifies the start of frame.
 */
 #define StartFrame '#'
@@ -107,33 +135,28 @@
  * Indicates a failure at the execution of the called function. 
 */
 #define SS_FAILURE_ENDFRAMENOTFOUND -4
+
 /**
  * \brief Alias for failed return.
  * 
  * Indicates a failure at the execution of the called function. 
 */
 #define SS_FAILURE_COMMANDNOTFOUND -5
+
 /**
  * \brief Alias for failed return.
  * 
  * Indicates a failure at the execution of the called function. 
 */
-
-
 #define SS_FAILURE_STARTFRAMENOTFOUND -6
+
 /**
  * \brief Alias for failed return.
  * 
  * Indicates a failure at the execution of the called function. 
 */
-
-
 #define SS_FAILURE_RECORDFULL -7
-/**
- * \brief Alias for failed return.
- * 
- * Indicates a failure at the execution of the called function. 
-*/
+
 /*********************************************************/
 
 #include <stdint.h>

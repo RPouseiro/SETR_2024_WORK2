@@ -38,7 +38,7 @@ int SS_InitMeasures(void)
     for(i=0;i<(int)sizeof(Temperature);i++)
     {
         Temperature[i] = 0;
-        Humidity[i] = 'x';
+        Humidity[i] = 0;
     }
 
     for(i=0;i<(int)sizeof(Air_CO2);i++)
@@ -95,10 +95,12 @@ void getTxBuffer(uint8_t * buf, uint8_t *len)
     int i;
     *len = TxBufLen;
 
+    // Gets the TxBuffer
 	if(TxBufLen > 0) {
 		memcpy(buf,UART_TxBuffer, *len);
 	}
 
+    // Proceeds to clear the TxBuffer
     for(i=TxBufLen;i>-1;i--)
     {
         UART_TxBuffer[i]=0;
@@ -116,7 +118,7 @@ int SS_ProcessCom(void)
         }
 
         int i,aux;
-        uint8_t SensorID; /* Symbol that identifies the type of sensor */
+        uint8_t SensorID; //Symbol that identifies the type of sensor
 
         // Find index of StartFrame
         for (i=0; i<RxBufLen;i++)
@@ -135,17 +137,20 @@ int SS_ProcessCom(void)
                     /*
                     if (!SS_CalcCheckSum)
                     */
-                   
+
+                    // Checks if EndFrame is presented
                     if (UART_RxBuffer[i+4] != EndFrame)
                     {
+                        // Clears frame size from RxBuffer
                         aux = i+3;
                         for(i=0;i<aux;i++)
                         {
                             UART_RxBuffer[i]=0;
                             RxBufLen -= 1;
                         }
-                        return SS_FAILURE_ENDFRAMENOTFOUND; /* Return Error if EndFrame is not found. */
+                        return SS_FAILURE_ENDFRAMENOTFOUND;
                     }
+
                     // Generate Response
                     SS_RealTimeTemperature(UART_RxBuffer[i+1]);
                     SS_RealTimeHumidity(UART_RxBuffer[i+1]);
@@ -158,12 +163,12 @@ int SS_ProcessCom(void)
                         UART_RxBuffer[i]=0;
                         RxBufLen -= 1;
                     }
-
                     return SS_SUCCESS;
                 }
                 case 'P':
                 {
                     SensorID = UART_RxBuffer[i+2];
+                    // Checks if the sensor symbol is correct
                     if (SensorID != TEMP_SENSOR && SensorID != HUM_SENSOR && SensorID != AIR_SENSOR)
                     {
                         aux = i+2;
@@ -172,13 +177,15 @@ int SS_ProcessCom(void)
                             UART_RxBuffer[i]=0;
                             RxBufLen -= 1;
                         }
-                        return SS_FAILURE_INVALIDDATA; /* Return Error if SensorID is invalid. */
+                        return SS_FAILURE_INVALIDDATA;
                     }
+
                     //TODO: CONDITION TO VERIFIED CHECKSUM
                     /*
                     if (!SS_CalcCheckSum)
                     */
                    
+                    // Checks if EndFrame is presented
                     if (UART_RxBuffer[i+4] != EndFrame)
                     {
                         aux = i+3;
@@ -190,7 +197,7 @@ int SS_ProcessCom(void)
                         return SS_FAILURE_ENDFRAMENOTFOUND; /* Return Error if EndFrame is not found. */
                     }
 
-                    // Generate Response
+                    // Generate Response matching the sensor
                     if (SensorID ==TEMP_SENSOR)
                         SS_RealTimeTemperature(UART_RxBuffer[i+1]);
                     if (SensorID == HUM_SENSOR )
@@ -214,7 +221,8 @@ int SS_ProcessCom(void)
                     /*
                     if (!SS_CalcCheckSum)
                     */
-                   
+                    
+                    // Checks if EndFrame is presented
                     if (UART_RxBuffer[i+4] != EndFrame)
                     {
                         aux = i+3;
@@ -223,10 +231,10 @@ int SS_ProcessCom(void)
                             UART_RxBuffer[i]=0;
                             RxBufLen -= 1;
                         }
-                        return SS_FAILURE_ENDFRAMENOTFOUND; /* Return Error if EndFrame is not found. */
+                        return SS_FAILURE_ENDFRAMENOTFOUND;
                     }
 
-                    // Generate Response
+                    // Generate Responses
                     SS_LogTemperature();
                     SS_LogHumidity();
                     SS_LogCO2();
@@ -244,6 +252,7 @@ int SS_ProcessCom(void)
                 case 'R':
                 {
                     SensorID = UART_RxBuffer[i+2];
+                    // Checks if the sensor symbol is correct
                     if (SensorID != TEMP_SENSOR && SensorID != HUM_SENSOR && SensorID != AIR_SENSOR && SensorID != ALL)
                     {
                         aux = i+2;
@@ -260,6 +269,7 @@ int SS_ProcessCom(void)
                     if (!SS_CalcCheckSum)
                     */
                    
+                    // Checks if EndFrame is presented
                     if (UART_RxBuffer[i+4] != EndFrame)
                     {
                         aux = i+3;
@@ -305,7 +315,12 @@ int SS_ProcessCom(void)
                 }
             }
         }
-
+        //Clears the characters already read from the RxBufLen
+        for(i=0;i<RxBufLen;i++)
+        {
+            UART_RxBuffer[i]=0;
+            RxBufLen -= 1;
+        }
         return SS_FAILURE_STARTFRAMENOTFOUND;
 }
 /***********************FUNCTONS***********************/
@@ -313,12 +328,11 @@ int SS_ProcessCom(void)
 /*******************SENSOR FUNCTONS******************/
 int SS_RealTimeTemperature(uint8_t CMD)
 {
-
-    srand ( time(NULL) );
     uint8_t data1, data2, data3;
     int i,aux;
 
     // Generate random value inside of range for temperature
+    srand(time(NULL));
     aux = rand()%2;
     if (aux)
     {
@@ -354,45 +368,48 @@ int SS_RealTimeTemperature(uint8_t CMD)
         } 
     }
 
-    // Save Measure
+    // Save measure for log history
+    // Finds first empty spot on the log history
     for(i=0;i<MAX_TEM_RECORD;i=i+3)
     {
         if (Temperature[i]!='+' && Temperature[i]!='-')
         {
-            Temperature[i] = data1;
-            Temperature[i+1] = data2;
-            Temperature[i+3] = data3;
+            Temperature[i] = data1;     // Identifies positive or negative temperature
+            Temperature[i+1] = data2;   //
+            Temperature[i+3] = data3;   //
             break;
         }
     }
     if (i!=MAX_TEM_RECORD)
     {   
+        // Checks if TxBuffer can save response
         if(TxBufLen<=BUFFER_SIZE-8)
         { 
-        //Insert Command
-        SS_AddCharTx(StartFrame);
-        SS_AddCharTx(CMD+32);
-        SS_AddCharTx('t');
-        SS_AddCharTx(data1);
-        SS_AddCharTx(48+data2);
-        SS_AddCharTx(48+data3);
-        SS_AddCharTx('0');
-        SS_AddCharTx('!');
+            //Write Response Command
+            SS_AddCharTx(StartFrame);   // Startframe Symbol
+            SS_AddCharTx(CMD+32);       // Command Response
+            SS_AddCharTx(TEMP_SENSOR+32);// Sensor ID
+            SS_AddCharTx(data1);        // Temperature sign
+            SS_AddCharTx(48+data2);     // Converts decimal to ASCII
+            SS_AddCharTx(48+data3);     // Converts decimal to ASCII
+            SS_AddCharTx('0');          // Checksum value
+            SS_AddCharTx(EndFrame);     // EndFrame Symbol
 
-        //DEBUG
-        printf("\n");
-        for(i=0;i<TxBufLen;i++)
-        {
-            printf("%c",UART_TxBuffer[i]);
-        }
-        return SS_SUCCESS;
+            //DEBUG
+            printf("\n");
+            for(i=0;i<TxBufLen;i++)
+            {
+                printf("%c",UART_TxBuffer[i]);
+            }
+            
+            return SS_SUCCESS;
         } 
         else
         {
             return SS_FAILURE_BUFFERFULL;
-        } 
+        }
     }
-    return SS_FAILURE_BUFFERFULL;
+    return SS_FAILURE_RECORDFULL;
     
 }
 
@@ -401,27 +418,27 @@ int SS_RealTimeHumidity(uint8_t CMD)
     uint8_t data1, data2, data3;
     int i,aux;
 
-    srand ( time(NULL) );
-
     // Generate random value inside of range for humidity
+    srand(time(NULL));
     aux = rand()%100;
-    if (!aux)
+    if (!aux)       // Maximum value for humidity
     {
         data1 = 1;
         data2 = 0;
         data3 = 0;
     }
-    else
+    else            // Random value between 0 and 99%
     {
         data1 = 0;
         data2 = (uint8_t) (rand()%10);
         data3 = (uint8_t) (rand()%10);
     }
 
-    // Save Measure
+    // Save measure for log history
+    // Finds first empty spot on the log history
     for(i=0;i<MAX_HUM_RECORD;i=i+3)
     {
-        if (Humidity[i]!='x')
+        if (Humidity[i]!=0)
         {
             Humidity[i] = data1;
             Humidity[i+1] = data2;
@@ -434,25 +451,26 @@ int SS_RealTimeHumidity(uint8_t CMD)
     {
         if(TxBufLen<=BUFFER_SIZE-8)
         { 
-        //Insert Command
-        SS_AddCharTx(StartFrame);
-        SS_AddCharTx(CMD+32);
-        SS_AddCharTx('h');
-        SS_AddCharTx(48+data1);
-        SS_AddCharTx(48+data2);
-        SS_AddCharTx(48+data3);
-        SS_AddCharTx('0');
-        SS_AddCharTx(EndFrame);
-        //DEBUG
-        printf("\n");
-        for(i=0;i<TxBufLen;i++)
-        {
-            printf("%c",UART_TxBuffer[i]);
-        }
+            //Insert Command
+            SS_AddCharTx(StartFrame);   // Startframe Symbol
+            SS_AddCharTx(CMD+32);       // Command Response
+            SS_AddCharTx(HUM_SENSOR+32);// Sensor ID
+            SS_AddCharTx(48+data1);     // Converts decimal to ASCII
+            SS_AddCharTx(48+data2);     // Converts decimal to ASCII
+            SS_AddCharTx(48+data3);     // Converts decimal to ASCII
+            SS_AddCharTx('0');          // Checksum value
+            SS_AddCharTx(EndFrame);     // EndFrame Symbol
+        
+            //DEBUG
+            printf("\n");
+            for(i=0;i<TxBufLen;i++)
+            {
+                printf("%c",UART_TxBuffer[i]);
+            }
 
-        return SS_SUCCESS;
+            return SS_SUCCESS;
         } 
-        else
+            else
         {
             return SS_FAILURE_BUFFERFULL;
         } 
@@ -462,13 +480,13 @@ int SS_RealTimeHumidity(uint8_t CMD)
 
 int SS_RealTimeCO2(uint8_t CMD)
 {
-    srand ( time(NULL) );
+    
 
     uint8_t data1, data2, data3, data4, data5;
     int i;
     // Generate random value inside of range for Co2 sensor
-    
-    if (!rand()%19600)
+    srand(time(NULL));
+    if (!rand()%19600)  //Maximum value
     {
         data1 = 2;
         data2 = 0;
@@ -476,7 +494,7 @@ int SS_RealTimeCO2(uint8_t CMD)
         data4 = 0;
         data5 = 0;
     }
-    else
+    else                // Random value between 0 and 19000
     {
         data1 = (uint8_t) (rand()%2);
         data2 = (uint8_t) (rand()%10);
@@ -484,14 +502,16 @@ int SS_RealTimeCO2(uint8_t CMD)
         data4 = (uint8_t) (rand()%10);
         data5 = (uint8_t) (rand()%10);
     }
-    if(!data1 && !data2){
+    if(!data1 && !data2) // Sets the mininum value to 400
+    {
         data3 = 4;
     } 
 
-    // Save Measure
+    // Save measure for log history
+    // Finds first empty spot on the log history
     for(i=0;i<MAX_AIR_RECORD;i=i+5)
     {
-        if (Air_CO2[i]!='0' || Air_CO2[i+1]!='0' || Air_CO2[i+2]!='0')
+        if (Air_CO2[i]!=0 || Air_CO2[i+1]!=0 || Air_CO2[i+2]!=0)
         {
             Air_CO2[i] = data1;
             Air_CO2[i+1] = data2;
@@ -506,44 +526,42 @@ int SS_RealTimeCO2(uint8_t CMD)
     {
         if(TxBufLen<=BUFFER_SIZE-8)
         { 
-        //Insert Command
-        SS_AddCharTx(StartFrame);
-        SS_AddCharTx(CMD+32);
-        SS_AddCharTx('c');
-        SS_AddCharTx(48+data1);
-        SS_AddCharTx(48+data2);
-        SS_AddCharTx(48+data3);
-        SS_AddCharTx(48+data4);
-        SS_AddCharTx(48+data5);
-        SS_AddCharTx('0');
-        SS_AddCharTx(EndFrame);
+            //Insert Command
+            SS_AddCharTx(StartFrame);// Startframe Symbol
+            SS_AddCharTx(CMD+32);// Command Response
+            SS_AddCharTx(AIR_SENSOR+32);// Sensor ID
+            SS_AddCharTx(48+data1);// Converts decimal to ASCII
+            SS_AddCharTx(48+data2);// Converts decimal to ASCII
+            SS_AddCharTx(48+data3);// Converts decimal to ASCII
+            SS_AddCharTx(48+data4);
+            SS_AddCharTx(48+data5);
+            SS_AddCharTx('0');// Checksum value
+            SS_AddCharTx(EndFrame);// EndFrame Symbol
+    
+            /*//DEBUG
+            printf("\n");
+            for(i=0;i<TxBufLen;i++)
+            {
+                printf("%c",UART_TxBuffer[i]);
+            }*/
 
-                //DEBUG
-        printf("\n");
-        for(i=0;i<TxBufLen;i++)
-        {
-            printf("%c",UART_TxBuffer[i]);
-        }
-
-        return SS_SUCCESS;
-         } 
+            return SS_SUCCESS;
+        } 
         else
         {
             return SS_FAILURE_BUFFERFULL;
         } 
     }
-    return SS_FAILURE_BUFFERFULL;
-
-
+    return SS_FAILURE_RECORDFULL;
 }
 
 int SS_LogTemperature(void)
 {
     int i = 0;
     int data1, data2, data3;
-    for(i=0;i<MAX_TEM_RECORD;i=i+3)
+    for(i=0;i<LOG_SAMPLES;i=i+3)
     {
-        if (Temperature[i]!='+' && Temperature[i]!='-')
+        if (Temperature[i]=='+' || Temperature[i]=='-')
         {
             data1 = Temperature[i];
             data2 = Temperature[i+1];
@@ -557,9 +575,9 @@ int SS_LogTemperature(void)
             SS_AddCharTx(StartFrame);
             SS_AddCharTx('l');
             SS_AddCharTx('t');
-            SS_AddCharTx(data1);
-            SS_AddCharTx(data2);
-            SS_AddCharTx(data3);
+            SS_AddCharTx(data1+48);
+            SS_AddCharTx(data2+48);
+            SS_AddCharTx(data3+48);
             SS_AddCharTx('0');
             SS_AddCharTx('!');
             } 
