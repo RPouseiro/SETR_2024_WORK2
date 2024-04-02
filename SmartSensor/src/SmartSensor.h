@@ -19,28 +19,28 @@
  * 
  * Indicates the maximum number of temperature measures that can will be saved.
 */
-#define MAX_TEM_RECORD 50
+#define MAX_TEM_RECORD 42
 
 /**
  * \brief Maximum size for the humidity measures array.
  * 
  * Indicates the maximum number of humidity measures that can will be saved.
 */
-#define MAX_HUM_RECORD 50
+#define MAX_HUM_RECORD 42
 
 /**
  * \brief Maximum size for the air measures data array.
  * 
  * Indicates the maximum number of air measures measures that can will be saved.
 */
-#define MAX_AIR_RECORD 50
+#define MAX_AIR_RECORD 42
 
 /**
  * \brief Maximum size of transmitter and receiver buffer.
  * 
  * XPTO
 */
-#define BUFFER_SIZE 20
+#define BUFFER_SIZE 128
 
 /**
  * \brief Symbol that identifies the start of frame.
@@ -121,6 +121,14 @@
 
 
 #define SS_FAILURE_STARTFRAMENOTFOUND -6
+/**
+ * \brief Alias for failed return.
+ * 
+ * Indicates a failure at the execution of the called function. 
+*/
+
+
+#define SS_FAILURE_RECORDFULL -7
 /**
  * \brief Alias for failed return.
  * 

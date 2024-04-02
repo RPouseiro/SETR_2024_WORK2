@@ -34,6 +34,7 @@ void test_SmartSensor_CheckValidCmd(void)
 	SS_AddCharRx('0');
 	SS_AddCharRx(EndFrame);
     TEST_ASSERT_EQUAL_INT(SS_SUCCESS, SS_ProcessCom());
+	
     // Check command 'P' for humidity sensor
     SS_AddCharRx(StartFrame);
 	SS_AddCharRx('P');
@@ -153,11 +154,53 @@ void test_SmartSensor_Humidity(void)
 	SS_AddCharRx('0');
 	SS_AddCharRx(EndFrame);
 	SS_ProcessCom();
-	
+
 	getTxBuffer(buffer, &len);
 	TEST_ASSERT_EQUAL_INT(8, len);
 	TEST_ASSERT_EQUAL_INT('#',buffer[0]);
 	TEST_ASSERT_EQUAL_INT('!',buffer[7]);
+}
+
+
+void test_SmartSensor_CO2(void)
+{
+    uint8_t buffer[BUFFER_SIZE];
+	uint8_t len;
+    SS_ResetRxBuffer();
+	SS_ResetTxBuffer();
+	SS_AddCharRx(StartFrame);
+	SS_AddCharRx('P');
+	SS_AddCharRx(AIR_SENSOR);
+	SS_AddCharRx('0');
+	SS_AddCharRx(EndFrame);
+	SS_ProcessCom();
+
+	getTxBuffer(buffer, &len);
+	TEST_ASSERT_EQUAL_INT(10, len);
+	TEST_ASSERT_EQUAL_INT('#',buffer[0]);
+	TEST_ASSERT_EQUAL_INT('!',buffer[9]);
+}
+
+void test_SmartSensor_Log_Temp(void)
+{
+    uint8_t buffer[BUFFER_SIZE];
+	uint8_t len;
+    SS_ResetRxBuffer();
+	SS_ResetTxBuffer();
+	SS_AddCharRx(StartFrame);
+	SS_AddCharRx('P');
+	SS_AddCharRx(TEMP_SENSOR);
+	SS_AddCharRx('0');
+	SS_AddCharRx(EndFrame);
+	SS_ProcessCom();
+	SS_AddCharRx(StartFrame);
+	SS_AddCharRx('P');
+	SS_AddCharRx(TEMP_SENSOR);
+	SS_AddCharRx('0');
+	SS_AddCharRx(EndFrame);
+	SS_ProcessCom();
+	SS_LogTemperature();
+	TEST_ASSERT_EQUAL_INT(SS_SUCCESS, SS_LogTemperature());
 }
 
 
@@ -169,15 +212,11 @@ int main(void) {
 
 
     UNITY_BEGIN(); 
+	RUN_TEST(test_SmartSensor_CheckInvalidCmd);
     RUN_TEST(test_SmartSensor_CheckValidCmd);
-    RUN_TEST(test_SmartSensor_CheckInvalidCmd); 
-	RUN_TEST(test_SmartSensor_Temperature); 
+  	RUN_TEST(test_SmartSensor_Temperature); 
     RUN_TEST(test_SmartSensor_Humidity);
-
-	test_SmartSensor_Temperature();
+    RUN_TEST(test_SmartSensor_CO2);
+	RUN_TEST(test_SmartSensor_Log_Temp);
     return UNITY_END();
 }
-
-// Define your test cases below
-
-// Write similar test cases for other functions

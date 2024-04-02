@@ -314,7 +314,6 @@ int SS_ProcessCom(void)
 int SS_RealTimeTemperature(uint8_t CMD)
 {
 
-
     srand ( time(NULL) );
     uint8_t data1, data2, data3;
     int i,aux;
@@ -368,9 +367,11 @@ int SS_RealTimeTemperature(uint8_t CMD)
     }
     if (i!=MAX_TEM_RECORD)
     {   
+        if(TxBufLen<=BUFFER_SIZE-8)
+        { 
         //Insert Command
         SS_AddCharTx(StartFrame);
-        SS_AddCharTx('p');
+        SS_AddCharTx(CMD+32);
         SS_AddCharTx('t');
         SS_AddCharTx(data1);
         SS_AddCharTx(48+data2);
@@ -378,15 +379,21 @@ int SS_RealTimeTemperature(uint8_t CMD)
         SS_AddCharTx('0');
         SS_AddCharTx('!');
 
-         //DEBUG
-         printf("\n");
+        //DEBUG
+        printf("\n");
         for(i=0;i<TxBufLen;i++)
         {
             printf("%c",UART_TxBuffer[i]);
         }
         return SS_SUCCESS;
+        } 
+        else
+        {
+            return SS_FAILURE_BUFFERFULL;
+        } 
     }
     return SS_FAILURE_BUFFERFULL;
+    
 }
 
 int SS_RealTimeHumidity(uint8_t CMD)
@@ -397,16 +404,16 @@ int SS_RealTimeHumidity(uint8_t CMD)
     srand ( time(NULL) );
 
     // Generate random value inside of range for humidity
-    aux = rand()%2;
-    if (aux==1)
+    aux = rand()%100;
+    if (!aux)
     {
-        data1 = '1';
-        data2 = '0';
-        data3 = '0';
+        data1 = 1;
+        data2 = 0;
+        data3 = 0;
     }
     else
     {
-        data1 = '0';
+        data1 = 0;
         data2 = (uint8_t) (rand()%10);
         data3 = (uint8_t) (rand()%10);
     }
@@ -425,58 +432,61 @@ int SS_RealTimeHumidity(uint8_t CMD)
 
     if (i!=MAX_HUM_RECORD)
     {
+        if(TxBufLen<=BUFFER_SIZE-8)
+        { 
         //Insert Command
         SS_AddCharTx(StartFrame);
-        SS_AddCharTx(CMD);
+        SS_AddCharTx(CMD+32);
         SS_AddCharTx('h');
         SS_AddCharTx(48+data1);
         SS_AddCharTx(48+data2);
         SS_AddCharTx(48+data3);
         SS_AddCharTx('0');
         SS_AddCharTx(EndFrame);
-
-         //DEBUG
-         printf("\n");
+        //DEBUG
+        printf("\n");
         for(i=0;i<TxBufLen;i++)
         {
             printf("%c",UART_TxBuffer[i]);
         }
 
         return SS_SUCCESS;
+        } 
+        else
+        {
+            return SS_FAILURE_BUFFERFULL;
+        } 
     }
-    return SS_FAILURE_BUFFERFULL;
+    return SS_FAILURE_RECORDFULL;
 }
 
 int SS_RealTimeCO2(uint8_t CMD)
 {
-    uint8_t data1, data2, data3, data4, data5;
-    int i,aux;
+    srand ( time(NULL) );
 
+    uint8_t data1, data2, data3, data4, data5;
+    int i;
     // Generate random value inside of range for Co2 sensor
-    aux = rand()%3;
-    if (aux == 2)
+    
+    if (!rand()%19600)
     {
-        data1 = '2';
-        data2 = '0';
-        data3 = '0';
-        data4 = '0';
-        data5 = '0';
+        data1 = 2;
+        data2 = 0;
+        data3 = 0;
+        data4 = 0;
+        data5 = 0;
     }
     else
     {
-        data1 = (uint8_t) aux;
-        data2 = (uint8_t) (rand()%9);
-        if(data1=='0' && data2=='0')
-        {
-            data3='4';
-        }
-        else
-        {
-            data3 = (uint8_t) (rand()%9);
-        }
-        data4 = (uint8_t) (rand()%9);
-        data5 = (uint8_t) (rand()%9);
+        data1 = (uint8_t) (rand()%2);
+        data2 = (uint8_t) (rand()%10);
+        data3 = (uint8_t) (rand()%10);
+        data4 = (uint8_t) (rand()%10);
+        data5 = (uint8_t) (rand()%10);
     }
+    if(!data1 && !data2){
+        data3 = 4;
+    } 
 
     // Save Measure
     for(i=0;i<MAX_AIR_RECORD;i=i+5)
@@ -494,9 +504,11 @@ int SS_RealTimeCO2(uint8_t CMD)
 
     if (i!=MAX_AIR_RECORD)
     {
+        if(TxBufLen<=BUFFER_SIZE-8)
+        { 
         //Insert Command
         SS_AddCharTx(StartFrame);
-        SS_AddCharTx(CMD);
+        SS_AddCharTx(CMD+32);
         SS_AddCharTx('c');
         SS_AddCharTx(48+data1);
         SS_AddCharTx(48+data2);
@@ -506,7 +518,19 @@ int SS_RealTimeCO2(uint8_t CMD)
         SS_AddCharTx('0');
         SS_AddCharTx(EndFrame);
 
+                //DEBUG
+        printf("\n");
+        for(i=0;i<TxBufLen;i++)
+        {
+            printf("%c",UART_TxBuffer[i]);
+        }
+
         return SS_SUCCESS;
+         } 
+        else
+        {
+            return SS_FAILURE_BUFFERFULL;
+        } 
     }
     return SS_FAILURE_BUFFERFULL;
 
@@ -515,7 +539,41 @@ int SS_RealTimeCO2(uint8_t CMD)
 
 int SS_LogTemperature(void)
 {
-    return 0;
+    int i = 0;
+    int data1, data2, data3;
+    for(i=0;i<MAX_TEM_RECORD;i=i+3)
+    {
+        if (Temperature[i]!='+' && Temperature[i]!='-')
+        {
+            data1 = Temperature[i];
+            data2 = Temperature[i+1];
+            data3 = Temperature[i+2];
+        }
+        if (i!=MAX_TEM_RECORD)
+        {   
+            if(TxBufLen<=BUFFER_SIZE-8)
+            { 
+            //Insert Command
+            SS_AddCharTx(StartFrame);
+            SS_AddCharTx('l');
+            SS_AddCharTx('t');
+            SS_AddCharTx(data1);
+            SS_AddCharTx(data2);
+            SS_AddCharTx(data3);
+            SS_AddCharTx('0');
+            SS_AddCharTx('!');
+            } 
+            else
+            {
+                return SS_FAILURE_BUFFERFULL;
+            } 
+        }
+        else
+        {
+            return SS_SUCCESS;
+        }  
+    }       
+       
 }
 
 int SS_LogHumidity(void)
