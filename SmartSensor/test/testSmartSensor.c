@@ -195,8 +195,55 @@ void test_SmartSensor_Log_Temp(void)
 	SS_AddCharRx('0');
 	SS_AddCharRx(EndFrame);
 	SS_ProcessCom();
-	SS_LogTemperature();
 	TEST_ASSERT_EQUAL_INT(SS_SUCCESS, SS_LogTemperature());
+
+}
+
+
+
+void test_SmartSensor_Log_Hum(void)
+{
+    uint8_t buffer[BUFFER_SIZE];
+	uint8_t len;
+    SS_ResetRxBuffer();
+	SS_ResetTxBuffer();
+	SS_AddCharRx(StartFrame);
+	SS_AddCharRx('P');
+	SS_AddCharRx(HUM_SENSOR);
+	SS_AddCharRx('0');
+	SS_AddCharRx(EndFrame);
+	SS_ProcessCom();
+	SS_AddCharRx(StartFrame);
+	SS_AddCharRx('P');
+	SS_AddCharRx(HUM_SENSOR);
+	SS_AddCharRx('0');
+	SS_AddCharRx(EndFrame);
+	SS_ProcessCom();
+
+	TEST_ASSERT_EQUAL_INT(SS_SUCCESS, SS_LogHumidity());
+
+}
+
+void test_SmartSensor_Log_CO2(void)
+{
+    uint8_t buffer[BUFFER_SIZE];
+	uint8_t len;
+    SS_ResetRxBuffer();
+	SS_ResetTxBuffer();
+	SS_AddCharRx(StartFrame);
+	SS_AddCharRx('P');
+	SS_AddCharRx(AIR_SENSOR);
+	SS_AddCharRx('0');
+	SS_AddCharRx(EndFrame);
+	SS_ProcessCom();
+	SS_AddCharRx(StartFrame);
+	SS_AddCharRx('P');
+	SS_AddCharRx(AIR_SENSOR);
+	SS_AddCharRx('0');
+	SS_AddCharRx(EndFrame);
+	SS_ProcessCom();
+
+	TEST_ASSERT_EQUAL_INT(SS_SUCCESS, SS_LogCO2());
 }
 
 
@@ -205,7 +252,7 @@ int main(void) {
     /* Init UART RX and TX buffers */
 	SS_ResetRxBuffer();
 	SS_ResetTxBuffer();
-
+	SS_InitMeasures();
 
     UNITY_BEGIN(); 
 	RUN_TEST(test_SmartSensor_CheckInvalidCmd);
@@ -214,5 +261,8 @@ int main(void) {
     RUN_TEST(test_SmartSensor_Humidity);
     RUN_TEST(test_SmartSensor_CO2);
 	RUN_TEST(test_SmartSensor_Log_Temp);
+	RUN_TEST(test_SmartSensor_Log_Hum);
+	RUN_TEST(test_SmartSensor_Log_CO2);
+
     return UNITY_END();
 }

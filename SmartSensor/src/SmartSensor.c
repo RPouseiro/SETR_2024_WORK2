@@ -184,7 +184,6 @@ int SS_ProcessCom(void)
                     /*
                     if (!SS_CalcCheckSum)
                     */
-                   
                     // Checks if EndFrame is presented
                     if (UART_RxBuffer[i+4] != EndFrame)
                     {
@@ -292,7 +291,6 @@ int SS_ProcessCom(void)
                     {
                         SS_ResetALL();
                     }
-
                     // Clear command and previous positions on the RxBuffer
                     int aux = i+4;
                     for(i=0;i<aux;i++)
@@ -376,41 +374,32 @@ int SS_RealTimeTemperature(uint8_t CMD)
         {
             Temperature[i] = data1;     // Identifies positive or negative temperature
             Temperature[i+1] = data2;   //
-            Temperature[i+3] = data3;   //
+            Temperature[i+2] = data3;   //
             break;
         }
     }
-    if (i!=MAX_TEM_RECORD)
-    {   
-        // Checks if TxBuffer can save response
-        if(TxBufLen<=BUFFER_SIZE-8)
-        { 
-            //Write Response Command
-            SS_AddCharTx(StartFrame);   // Startframe Symbol
-            SS_AddCharTx(CMD+32);       // Command Response
-            SS_AddCharTx(TEMP_SENSOR+32);// Sensor ID
-            SS_AddCharTx(data1);        // Temperature sign
-            SS_AddCharTx(48+data2);     // Converts decimal to ASCII
-            SS_AddCharTx(48+data3);     // Converts decimal to ASCII
-            SS_AddCharTx('0');          // Checksum value
-            SS_AddCharTx(EndFrame);     // EndFrame Symbol
 
-            //DEBUG
-            printf("\n");
-            for(i=0;i<TxBufLen;i++)
-            {
-                printf("%c",UART_TxBuffer[i]);
-            }
-            
-            return SS_SUCCESS;
-        } 
-        else
-        {
-            return SS_FAILURE_BUFFERFULL;
-        }
+    // Checks if TxBuffer can save response
+    if(TxBufLen<=BUFFER_SIZE-8)
+    { 
+        //Write Response Command
+        SS_AddCharTx(StartFrame);   // Startframe Symbol
+        SS_AddCharTx(CMD+32);       // Command Response
+        SS_AddCharTx(TEMP_SENSOR+32);// Sensor ID
+        SS_AddCharTx(data1);        // Temperature sign
+        SS_AddCharTx(48+data2);     // Converts decimal to ASCII
+        SS_AddCharTx(48+data3);     // Converts decimal to ASCII
+        SS_AddCharTx('0');          // Checksum value
+        SS_AddCharTx(EndFrame);     // EndFrame Symbol
+
+        //DEBUG
+       
+        return SS_SUCCESS;
+    } 
+    else
+    {
+        return SS_FAILURE_BUFFERFULL;
     }
-    return SS_FAILURE_RECORDFULL;
-    
 }
 
 int SS_RealTimeHumidity(uint8_t CMD)
@@ -438,7 +427,7 @@ int SS_RealTimeHumidity(uint8_t CMD)
     // Finds first empty spot on the log history
     for(i=0;i<MAX_HUM_RECORD;i=i+3)
     {
-        if (Humidity[i]!=0)
+        if (!Humidity[i] && !Humidity[i+1] && !Humidity[i+2])
         {
             Humidity[i] = data1;
             Humidity[i+1] = data2;
@@ -447,10 +436,11 @@ int SS_RealTimeHumidity(uint8_t CMD)
         }
     }
 
-    if (i!=MAX_HUM_RECORD)
+    if (i<=MAX_HUM_RECORD-3)
     {
         if(TxBufLen<=BUFFER_SIZE-8)
         { 
+            
             //Insert Command
             SS_AddCharTx(StartFrame);   // Startframe Symbol
             SS_AddCharTx(CMD+32);       // Command Response
@@ -461,13 +451,6 @@ int SS_RealTimeHumidity(uint8_t CMD)
             SS_AddCharTx('0');          // Checksum value
             SS_AddCharTx(EndFrame);     // EndFrame Symbol
         
-            //DEBUG
-            printf("\n");
-            for(i=0;i<TxBufLen;i++)
-            {
-                printf("%c",UART_TxBuffer[i]);
-            }
-
             return SS_SUCCESS;
         } 
             else
@@ -475,7 +458,6 @@ int SS_RealTimeHumidity(uint8_t CMD)
             return SS_FAILURE_BUFFERFULL;
         } 
     }
-    return SS_FAILURE_RECORDFULL;
 }
 
 int SS_RealTimeCO2(uint8_t CMD)
@@ -511,48 +493,42 @@ int SS_RealTimeCO2(uint8_t CMD)
     // Finds first empty spot on the log history
     for(i=0;i<MAX_AIR_RECORD;i=i+5)
     {
-        if (Air_CO2[i]!=0 || Air_CO2[i+1]!=0 || Air_CO2[i+2]!=0)
-        {
+        
             Air_CO2[i] = data1;
             Air_CO2[i+1] = data2;
             Air_CO2[i+2] = data3;
             Air_CO2[i+3] = data4;
-            Air_CO2[i+4] = data5;
-            break;
-        }
+            Air_CO2[i+4] = data5;        
     }
+    if(TxBufLen<=BUFFER_SIZE-10)
+    { 
 
-    if (i!=MAX_AIR_RECORD)
-    {
-        if(TxBufLen<=BUFFER_SIZE-8)
-        { 
-            //Insert Command
-            SS_AddCharTx(StartFrame);// Startframe Symbol
-            SS_AddCharTx(CMD+32);// Command Response
-            SS_AddCharTx(AIR_SENSOR+32);// Sensor ID
-            SS_AddCharTx(48+data1);// Converts decimal to ASCII
-            SS_AddCharTx(48+data2);// Converts decimal to ASCII
-            SS_AddCharTx(48+data3);// Converts decimal to ASCII
-            SS_AddCharTx(48+data4);
-            SS_AddCharTx(48+data5);
-            SS_AddCharTx('0');// Checksum value
-            SS_AddCharTx(EndFrame);// EndFrame Symbol
-    
-            /*//DEBUG
-            printf("\n");
-            for(i=0;i<TxBufLen;i++)
-            {
-                printf("%c",UART_TxBuffer[i]);
-            }*/
 
-            return SS_SUCCESS;
-        } 
-        else
+        //Insert Command
+        SS_AddCharTx(StartFrame);// Startframe Symbol
+        SS_AddCharTx(CMD+32);// Command Response
+        SS_AddCharTx(AIR_SENSOR+32);// Sensor ID
+        SS_AddCharTx(48+data1);// Converts decimal to ASCII
+        SS_AddCharTx(48+data2);// Converts decimal to ASCII
+        SS_AddCharTx(48+data3);// Converts decimal to ASCII
+        SS_AddCharTx(48+data4);
+        SS_AddCharTx(48+data5);
+        SS_AddCharTx('0');// Checksum value
+        SS_AddCharTx(EndFrame);// EndFrame Symbol
+
+        /*//DEBUG
+        printf("\n");
+        for(i=0;i<TxBufLen;i++)
         {
-            return SS_FAILURE_BUFFERFULL;
-        } 
-    }
-    return SS_FAILURE_RECORDFULL;
+            printf("%c",UART_TxBuffer[i]);
+        }*/
+
+        return SS_SUCCESS;
+    } 
+    else
+    {
+        return SS_FAILURE_BUFFERFULL;
+    } 
 }
 
 int SS_LogTemperature(void)
@@ -561,20 +537,52 @@ int SS_LogTemperature(void)
     int data1, data2, data3;
     for(i=0;i<LOG_SAMPLES;i=i+3)
     {
-        if (Temperature[i]=='+' || Temperature[i]=='-')
+            
+                
+        data1 = Temperature[i];
+        data2 = Temperature[i+1];
+        data3 = Temperature[i+2];
+        if(TxBufLen<=BUFFER_SIZE-8)
+        { 
+        //Insert Command
+        SS_AddCharTx(StartFrame);
+        SS_AddCharTx('l');
+        SS_AddCharTx('t');
+        SS_AddCharTx(data1);
+        SS_AddCharTx(data2+48);
+        SS_AddCharTx(data3+48);
+        SS_AddCharTx('0');
+        SS_AddCharTx('!');
+        } 
+        else
         {
-            data1 = Temperature[i];
-            data2 = Temperature[i+1];
-            data3 = Temperature[i+2];
-        }
-        if (i!=MAX_TEM_RECORD)
-        {   
+            return SS_FAILURE_BUFFERFULL;
+        } 
+        
+    }       
+       
+}
+
+int SS_LogHumidity(void)
+{  
+    int i = 0;
+    int data1, data2, data3;
+    for(i=0;i<LOG_SAMPLES;i=i+3)
+    {
+        
+            
+            data1 = Humidity[i];
+            data2 = Humidity[i+1];
+            data3 = Humidity[i+2];
+
+
             if(TxBufLen<=BUFFER_SIZE-8)
+
             { 
             //Insert Command
             SS_AddCharTx(StartFrame);
             SS_AddCharTx('l');
-            SS_AddCharTx('t');
+            SS_AddCharTx('h');
             SS_AddCharTx(data1+48);
             SS_AddCharTx(data2+48);
             SS_AddCharTx(data3+48);
@@ -584,25 +592,48 @@ int SS_LogTemperature(void)
             else
             {
                 return SS_FAILURE_BUFFERFULL;
-            } 
-        }
-        else
-        {
-            return SS_SUCCESS;
-        }  
+            }
+          
+    
     }       
-       
 }
-
-int SS_LogHumidity(void)
-{
-    return 0;
-}
-
 int SS_LogCO2(void)
 {
-    return 0;
-}
+ int i = 0;
+    int data1, data2, data3, data4, data5;
+    for(i=0;i<LOG_SAMPLES;i=i+5)
+    {
+        
+            
+            data1 = Air_CO2[i];
+            data2 = Air_CO2[i+1];
+            data3 = Air_CO2[i+2];
+            data4 = Air_CO2[i+3];
+            data5 = Air_CO2[i+4];
+
+          
+            if(TxBufLen<=BUFFER_SIZE-8)
+
+            { 
+            //Insert Command
+            SS_AddCharTx(StartFrame);
+            SS_AddCharTx('l');
+            SS_AddCharTx('c');
+            SS_AddCharTx(data1+48);
+            SS_AddCharTx(data2+48);
+            SS_AddCharTx(data3+48);
+            SS_AddCharTx(data4+48);
+            SS_AddCharTx(data5+48);
+            SS_AddCharTx('0');
+            SS_AddCharTx('!');
+            } 
+            else
+            {
+                return SS_FAILURE_BUFFERFULL;
+            }
+          
+    
+    }       }
 
 int SS_ResetTemperature(void)
 {

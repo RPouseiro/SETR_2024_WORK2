@@ -19,28 +19,28 @@
  * 
  * Indicates the maximum number of temperature measures that can will be saved.
 */
-#define MAX_TEM_RECORD 42
+#define MAX_TEM_RECORD 20
 
 /**
  * \brief Maximum size for the humidity measures array.
  * 
  * Indicates the maximum number of humidity measures that can will be saved.
 */
-#define MAX_HUM_RECORD 42
+#define MAX_HUM_RECORD 20
 
 /**
  * \brief Maximum size for the air measures data array.
  * 
  * Indicates the maximum number of air measures measures that can will be saved.
 */
-#define MAX_AIR_RECORD 42
+#define MAX_AIR_RECORD 20
 
 /**
  * \brief Maximum size of transmitter and receiver buffer.
  * 
  * XPTO
 */
-#define BUFFER_SIZE 128
+#define BUFFER_SIZE 500
 
 /**
  * \brief Maximum size of transmitter and receiver buffer.
