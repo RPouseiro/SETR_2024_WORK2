@@ -40,7 +40,7 @@
  * 
  * XPTO
 */
-#define BUFFER_SIZE 500
+#define BUFFER_SIZE 1024
 
 /**
  * \brief Maximum size of transmitter and receiver buffer.
@@ -157,6 +157,12 @@
 */
 #define SS_FAILURE_RECORDFULL -7
 
+/**
+ * \brief Alias for failed return.
+ * 
+ * Indicates a failure at the execution of the called function. 
+*/
+#define SS_FAILURE_CHECKSUM -8
 /*********************************************************/
 
 #include <stdint.h>
@@ -210,6 +216,11 @@ int SS_AddCharTx(uint8_t aux);
 */
 void getTxBuffer(uint8_t * buf, uint8_t *len);
 
+int SS_CheckSum(int soma,uint8_t *CS);
+
+int SS_CalcCheckSumTx(int soma);
+
+int SS_CalcCheckSumRx(int soma);
 
 /**
  * \brief
