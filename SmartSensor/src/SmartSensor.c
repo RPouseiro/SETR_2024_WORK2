@@ -1,15 +1,16 @@
-/*******************************************************/ /**
-                                                           * \file smartsensor.c
-                                                           *
-                                                           * \brief
-                                                           *
-                                                           * This file defines a set of functions for a smart sensor emulation.
-                                                           *
-                                                           * \author Daniel Escadas
-                                                           * \author Renato Pouseiro
-                                                           * \version 1.0
-                                                           * \date 12-03-2024
-                                                           */
+/*******************************************************/
+/**
+ * \file smartsensor.c
+ *
+ * \brief
+ *
+ * This file defines a set of functions for a smart sensor emulation.
+ *
+ * \author Daniel Escadas
+ * \author Renato Pouseiro
+ * \version 1.0
+ * \date 12-03-2024
+ */
 /*******************************************************/
 #include <stdint.h>
 #include <stdio.h>
@@ -101,11 +102,11 @@ void getTxBuffer(uint8_t *buf, uint8_t *len)
     {
         memcpy(buf, UART_TxBuffer, *len);
     }
-    for (i = 0; i < TxBufLen; i++)
+    /*for (i = 0; i < TxBufLen; i++)
     {
         printf("%c", buf[i]);
     }
-    printf("\n");
+    printf("\n");*/
     // Proceeds to clear the TxBuffer
     for (i = TxBufLen; i > 0; i--)
     {
@@ -178,8 +179,8 @@ int SS_ProcessCom(void)
 
     int i, aux;
     uint8_t SensorID; // Symbol that identifies the type of sensor
-    uint8_t CS[3];    // Symbols for the checksum
-    // Find index of StartFrame
+    // uint8_t CS[3];    // Symbols for the checksum
+    //  Find index of StartFrame
     for (i = 0; i < RxBufLen; i++)
     {
         if (UART_RxBuffer[i] == StartFrame)
@@ -632,7 +633,7 @@ int SS_LogHumidity(void)
     uint8_t len;
     int i = 0;
     int data1, data2, data3;
-    for (i = 0; i < LOG_SAMPLES*3; i = i + 3)
+    for (i = 0; i < LOG_SAMPLES * 3; i = i + 3)
     {
 
         data1 = Humidity[i];
@@ -657,7 +658,7 @@ int SS_LogCO2(void)
     uint8_t len;
     int i = 0;
     int data1, data2, data3, data4, data5;
-    for (i = 0; i < LOG_SAMPLES*5; i = i + 5)
+    for (i = 0; i < LOG_SAMPLES * 5; i = i + 5)
     {
 
         data1 = Air_CO2[i];
@@ -675,7 +676,7 @@ int SS_LogCO2(void)
         SS_AddCharTx(data3 + 48);
         SS_AddCharTx(data4 + 48);
         SS_AddCharTx(data5 + 48);
-        SS_CalcCheckSumTx(48 + data1 + 48 + data2 + 48 + data3 + 48 +data4 +48 +data5);
+        SS_CalcCheckSumTx(48 + data1 + 48 + data2 + 48 + data3 + 48 + data4 + 48 + data5);
         SS_AddCharTx('!');
         getTxBuffer(buffer, &len);
     }
@@ -714,9 +715,10 @@ int SS_ResetCO2(void)
     return SS_SUCCESS;
 }
 
-int SS_ResetALL()
+int SS_ResetALL(void)
 {
     SS_ResetTemperature();
     SS_ResetHumidity();
     SS_ResetCO2();
+    return SS_SUCCESS;
 }
